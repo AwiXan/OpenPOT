@@ -162,8 +162,12 @@ export const StringListTable: React.FC<StringListTableProps> = ({
                 <tr
                   key={entry.id}
                   draggable={editingEntryId !== entry.id}
-                  style={{ WebkitUserDrag: 'element' } as any}
+                  style={{ WebkitUserDrag: editingEntryId === entry.id ? 'none' : 'element' } as any}
                   onDragStart={(e) => {
+                    if (editingEntryId === entry.id) {
+                      e.preventDefault();
+                      return;
+                    }
                     let idsToDrag = Array.from(selectedIds);
                     if (!selectedIds.has(entry.id)) {
                       idsToDrag = [entry.id];
