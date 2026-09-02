@@ -68,14 +68,14 @@ export const NewKeyModal: React.FC<NewKeyModalProps> = ({
       <button
         type="button"
         onClick={onClose}
-        className="px-3.5 py-1.5 rounded bg-[#1C2128] hover:bg-[#2D3748] text-[#94A3B8] hover:text-[#E2E8F0] border border-[#2D3139] cursor-pointer transition-colors"
+        className="px-3.5 py-1.5 rounded bg-(--op-bg-raised) hover:bg-(--op-bg-raised-hover) text-(--op-text-secondary) hover:text-(--op-text-primary) border border-(--op-border) cursor-pointer transition-colors"
       >
         {t('common.cancel')}
       </button>
       <button
         type="submit"
         form="new-key-form"
-        className="px-4 py-1.5 rounded bg-[#3B82F6] hover:bg-[#2563EB] text-white font-semibold flex items-center gap-1.5 shadow-lg shadow-blue-500/20 cursor-pointer transition-all"
+        className="px-4 py-1.5 rounded bg-(--op-accent) hover:bg-(--op-accent-strong) text-white font-semibold flex items-center gap-1.5 shadow-lg shadow-(--op-accent)/20 cursor-pointer transition-all"
       >
         <Plus className="w-3.5 h-3.5" />
         <span>{t('newKey.submit')}</span>
@@ -95,7 +95,7 @@ export const NewKeyModal: React.FC<NewKeyModalProps> = ({
     >
       <form id="new-key-form" onSubmit={handleSubmit} className="space-y-4 text-xs">
         <div>
-          <label className="block text-[#E2E8F0] font-medium mb-1">
+          <label className="block text-(--op-text-primary) font-medium mb-1">
             {t('newKey.sourceLabel')}
           </label>
           <textarea
@@ -104,13 +104,13 @@ export const NewKeyModal: React.FC<NewKeyModalProps> = ({
             value={msgid}
             onChange={(e) => setMsgid(e.target.value)}
             placeholder={t('newKey.sourcePlaceholder')}
-            className="w-full bg-[#090B0E] border border-[#2D3139] rounded p-2.5 text-xs font-mono text-[#E2E8F0] placeholder-[#64748B] focus:border-[#3B82F6] outline-none resize-none"
+            className="w-full bg-(--op-bg-canvas) border border-(--op-border) rounded p-2.5 text-xs font-mono text-(--op-text-primary) placeholder-(--op-text-muted) focus:border-(--op-accent) outline-none resize-none"
           />
         </div>
 
         <div>
-          <label className="block text-[#94A3B8] font-medium mb-1 flex items-center gap-1.5">
-            <Folder className="w-3.5 h-3.5 text-[#F59E0B]" />
+          <label className="block text-(--op-text-secondary) font-medium mb-1 flex items-center gap-1.5">
+            <Folder className="w-3.5 h-3.5 text-(--op-warning)" />
             <span>{t('newKey.categoryLabel')}</span>
           </label>
           <input
@@ -119,36 +119,36 @@ export const NewKeyModal: React.FC<NewKeyModalProps> = ({
             value={category}
             onChange={(e) => setCategory(e.target.value)}
             placeholder={t('newKey.categoryPlaceholder')}
-            className="w-full bg-[#090B0E] border border-[#2D3139] rounded px-2.5 py-1.5 text-xs font-mono text-[#38BDF8] placeholder-[#64748B] focus:border-[#3B82F6] outline-none"
+            className="w-full bg-(--op-bg-canvas) border border-(--op-border) rounded px-2.5 py-1.5 text-xs font-mono text-(--op-accent-alt) placeholder-(--op-text-muted) focus:border-(--op-accent) outline-none"
           />
           <datalist id="newkey-category-suggestions">
             {availableCategories.map((c) => (
               <option key={c} value={c} />
             ))}
           </datalist>
-          <p className="text-[10px] text-[#64748B] mt-1">{t('category.categoryHelp')}</p>
+          <p className="text-[10px] text-(--op-text-muted) mt-1">{t('category.categoryHelp')}</p>
         </div>
 
-        <div className="bg-[#090B0E] p-3 rounded border border-[#2D3139] space-y-2">
+        <div className="bg-(--op-bg-canvas) p-3 rounded border border-(--op-border) space-y-2">
           <label className="flex items-center gap-2 cursor-pointer w-max">
             <input
               type="checkbox"
               checked={hasPlural}
               onChange={(e) => setHasPlural(e.target.checked)}
-              className="rounded bg-[#16191E] border-[#2D3139] text-[#3B82F6] focus:ring-0"
+              className="rounded bg-(--op-bg-surface) border-(--op-border) text-(--op-accent) focus:ring-0"
             />
-            <span className="font-medium text-[#E2E8F0]">{t('newKey.hasPlural')}</span>
+            <span className="font-medium text-(--op-text-primary)">{t('newKey.hasPlural')}</span>
           </label>
 
           {hasPlural && (
-            <div className="pt-2 border-t border-[#2D3139]">
-              <label className="block text-[#94A3B8] text-[11px] mb-1">{t('newKey.pluralLabel')}</label>
+            <div className="pt-2 border-t border-(--op-border)">
+              <label className="block text-(--op-text-secondary) text-[11px] mb-1">{t('newKey.pluralLabel')}</label>
               <input
                 type="text"
                 value={msgidPlural}
                 onChange={(e) => setMsgidPlural(e.target.value)}
                 placeholder={t('newKey.pluralPlaceholder')}
-                className="w-full bg-[#16191E] border border-[#2D3139] rounded px-2.5 py-1.5 text-xs font-mono text-[#E2E8F0] placeholder-[#64748B] focus:border-[#3B82F6] outline-none"
+                className="w-full bg-(--op-bg-surface) border border-(--op-border) rounded px-2.5 py-1.5 text-xs font-mono text-(--op-text-primary) placeholder-(--op-text-muted) focus:border-(--op-accent) outline-none"
               />
             </div>
           )}
@@ -156,35 +156,35 @@ export const NewKeyModal: React.FC<NewKeyModalProps> = ({
 
         <div className="grid grid-cols-2 gap-3">
           <div>
-            <label className="block text-[#94A3B8] font-medium mb-1">{t('newKey.contextLabel')}</label>
+            <label className="block text-(--op-text-secondary) font-medium mb-1">{t('newKey.contextLabel')}</label>
             <input
               type="text"
               value={msgctxt}
               onChange={(e) => setMsgctxt(e.target.value)}
               placeholder={t('newKey.contextPlaceholder')}
-              className="w-full bg-[#090B0E] border border-[#2D3139] rounded px-2.5 py-1.5 text-xs font-mono text-[#E2E8F0] placeholder-[#64748B] focus:border-[#3B82F6] outline-none"
+              className="w-full bg-(--op-bg-canvas) border border-(--op-border) rounded px-2.5 py-1.5 text-xs font-mono text-(--op-text-primary) placeholder-(--op-text-muted) focus:border-(--op-accent) outline-none"
             />
           </div>
           <div>
-            <label className="block text-[#94A3B8] font-medium mb-1">{t('newKey.refLabel')}</label>
+            <label className="block text-(--op-text-secondary) font-medium mb-1">{t('newKey.refLabel')}</label>
             <input
               type="text"
               value={references}
               onChange={(e) => setReferences(e.target.value)}
               placeholder="src/components/Header.tsx:42"
-              className="w-full bg-[#090B0E] border border-[#2D3139] rounded px-2.5 py-1.5 text-xs font-mono text-[#E2E8F0] placeholder-[#64748B] focus:border-[#3B82F6] outline-none"
+              className="w-full bg-(--op-bg-canvas) border border-(--op-border) rounded px-2.5 py-1.5 text-xs font-mono text-(--op-text-primary) placeholder-(--op-text-muted) focus:border-(--op-accent) outline-none"
             />
           </div>
         </div>
 
         <div>
-          <label className="block text-[#94A3B8] font-medium mb-1">{t('newKey.commentsLabel')}</label>
+          <label className="block text-(--op-text-secondary) font-medium mb-1">{t('newKey.commentsLabel')}</label>
           <input
             type="text"
             value={comments}
             onChange={(e) => setComments(e.target.value)}
             placeholder={t('newKey.commentsPlaceholder')}
-            className="w-full bg-[#090B0E] border border-[#2D3139] rounded px-2.5 py-1.5 text-xs text-[#E2E8F0] placeholder-[#64748B] focus:border-[#3B82F6] outline-none"
+            className="w-full bg-(--op-bg-canvas) border border-(--op-border) rounded px-2.5 py-1.5 text-xs text-(--op-text-primary) placeholder-(--op-text-muted) focus:border-(--op-accent) outline-none"
           />
         </div>
       </form>

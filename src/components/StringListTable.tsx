@@ -120,10 +120,10 @@ export const StringListTable: React.FC<StringListTableProps> = ({
   };
 
   return (
-    <div className="flex-1 flex flex-col bg-[#090B0E] border-r border-[#2D3139] overflow-hidden select-none">
+    <div className="flex-1 flex flex-col bg-(--op-bg-canvas) border-r border-(--op-border) overflow-hidden select-none">
       <div className="flex-1 overflow-y-auto custom-scrollbar">
         <table className="w-full text-left border-collapse">
-          <thead className="sticky top-0 bg-[#16191E] border-b border-[#2D3139] text-[10px] font-bold text-[#64748B] uppercase tracking-wider z-10">
+          <thead className="sticky top-0 bg-(--op-bg-surface) border-b border-(--op-border) text-[10px] font-bold text-(--op-text-muted) uppercase tracking-wider z-10">
             <tr>
               <th className="px-3 py-2.5 w-6 text-center"></th>
               <th className="px-3 py-2.5">{t('table.sourceMsgid')}</th>
@@ -147,15 +147,15 @@ export const StringListTable: React.FC<StringListTableProps> = ({
               const IssueIcon = hasError ? AlertCircle : hasWarning ? AlertTriangle : Info;
               const pluralIssues = issues.filter((issue) => issue.field === 'plural');
 
-              let dotColor = 'text-[#64748B]';
+              let dotColor = 'text-(--op-text-muted)';
               if (isPotTemplate) {
-                dotColor = 'text-[#3B82F6]';
+                dotColor = 'text-(--op-accent)';
               } else if (hasError) {
-                dotColor = 'text-[#EF4444]';
+                dotColor = 'text-(--op-danger)';
               } else if (isFuzzy) {
-                dotColor = 'text-[#F59E0B]';
+                dotColor = 'text-(--op-warning)';
               } else if (isFilled) {
-                dotColor = 'text-[#4ADE80]';
+                dotColor = 'text-(--op-success)';
               }
 
               return (
@@ -179,12 +179,12 @@ export const StringListTable: React.FC<StringListTableProps> = ({
                     e.dataTransfer.effectAllowed = 'copyMove';
                   }}
                   onClick={(e) => handleRowClick(entry, e)}
-                  className={`group border-b border-[#16191E] cursor-pointer transition-colors ${
+                  className={`group border-b border-(--op-bg-surface) cursor-pointer transition-colors ${
                     isActive
-                      ? 'bg-[#1E293B] border-l-2 border-[#3B82F6]'
+                      ? 'bg-(--op-bg-active) border-l-2 border-(--op-accent)'
                       : isMultiSelected
-                      ? 'bg-[#1E293B]/60 border-l-2 border-[#38BDF860]'
-                      : 'hover:bg-[#1E293B40]'
+                      ? 'bg-(--op-bg-active)/60 border-l-2 border-(--op-accent-alt)/38'
+                      : 'hover:bg-(--op-bg-active)/25'
                   }`}
                 >
                   <td className={`px-3 py-2.5 text-center text-xs ${dotColor}`}>
@@ -209,7 +209,7 @@ export const StringListTable: React.FC<StringListTableProps> = ({
                           }
                         }}
                         onBlur={() => handleCommitRename(entry)}
-                        className="w-full bg-[#090B0E] border border-[#3B82F6] rounded px-1.5 py-0.5 text-xs font-mono text-[#38BDF8] outline-none shadow-inner"
+                        className="w-full bg-(--op-bg-canvas) border border-(--op-accent) rounded px-1.5 py-0.5 text-xs font-mono text-(--op-accent-alt) outline-none shadow-inner"
                       />
                     ) : (
                       <div
@@ -217,16 +217,16 @@ export const StringListTable: React.FC<StringListTableProps> = ({
                         onDoubleClick={(e) => handleStartRename(entry, e)}
                         title="Double-click to rename key • Drag to move to category"
                       >
-                        <span className="font-semibold text-[#E2E8F0] truncate hover:text-[#38BDF8] transition-colors">
+                        <span className="font-semibold text-(--op-text-primary) truncate hover:text-(--op-accent-alt) transition-colors">
                           {entry.msgid}
                         </span>
                         {isPlural && (
-                          <span className="text-[9px] px-1 py-0.2 rounded bg-[#3B82F61A] text-[#3B82F6] font-mono shrink-0">
+                          <span className="text-[9px] px-1 py-0.2 rounded bg-(--op-accent)/10 text-(--op-accent) font-mono shrink-0">
                             plural
                           </span>
                         )}
                         {entry.msgctxt && (
-                          <span className="text-[9px] px-1 py-0.2 rounded bg-[#1C2128] text-[#94A3B8] font-mono truncate shrink-0 border border-[#2D3139]">
+                          <span className="text-[9px] px-1 py-0.2 rounded bg-(--op-bg-raised) text-(--op-text-secondary) font-mono truncate shrink-0 border border-(--op-border)">
                             [{entry.msgctxt}]
                           </span>
                         )}
@@ -234,27 +234,27 @@ export const StringListTable: React.FC<StringListTableProps> = ({
                     )}
 
                     {!isPotTemplate && (
-                      <div className="text-[11px] text-[#94A3B8] font-sans truncate mt-0.5">
-                        {isFilled ? entry.msgstr[0] : <span className="text-[#64748B] italic">{t('table.untranslatedBadge')}</span>}
+                      <div className="text-[11px] text-(--op-text-secondary) font-sans truncate mt-0.5">
+                        {isFilled ? entry.msgstr[0] : <span className="text-(--op-text-muted) italic">{t('table.untranslatedBadge')}</span>}
                       </div>
                     )}
                   </td>
 
                   <td className="px-3 py-2.5">
                     {isPotTemplate ? (
-                      <span className="text-[#3B82F6] bg-[#3B82F61A] px-2 py-0.5 rounded text-[10px] font-mono">
+                      <span className="text-(--op-accent) bg-(--op-accent)/10 px-2 py-0.5 rounded text-[10px] font-mono">
                         TEMPLATE
                       </span>
                     ) : !isFilled ? (
-                      <span className="text-[#64748B] bg-[#64748B1A] px-2 py-0.5 rounded text-[10px] font-mono">
+                      <span className="text-(--op-text-muted) bg-(--op-text-muted)/10 px-2 py-0.5 rounded text-[10px] font-mono">
                         {t('table.untranslatedBadge')}
                       </span>
                     ) : isFuzzy ? (
-                      <span className="text-[#F59E0B] bg-[#F59E0B1A] px-2 py-0.5 rounded text-[10px] font-mono">
+                      <span className="text-(--op-warning) bg-(--op-warning)/10 px-2 py-0.5 rounded text-[10px] font-mono">
                         {t('table.fuzzyBadge')}
                       </span>
                     ) : (
-                      <span className="text-[#4ADE80] bg-[#4ADE801A] px-2 py-0.5 rounded text-[10px] font-mono">
+                      <span className="text-(--op-success) bg-(--op-success)/10 px-2 py-0.5 rounded text-[10px] font-mono">
                         {t('editor.translated')}
                       </span>
                     )}
@@ -265,27 +265,27 @@ export const StringListTable: React.FC<StringListTableProps> = ({
                       <div
                         className={`flex items-center gap-1.5 rounded px-1.5 py-1 border ${
                           issueSeverity === 'error'
-                            ? 'border-rose-800/70 bg-rose-950/30'
+                            ? 'border-(--op-danger)/40 bg-(--op-danger)/10'
                             : issueSeverity === 'warning'
-                              ? 'border-amber-800/70 bg-amber-950/20'
-                              : 'border-sky-800/70 bg-sky-950/20'
+                              ? 'border-(--op-warning)/40 bg-(--op-warning)/10'
+                              : 'border-(--op-accent-alt)/40 bg-(--op-accent-alt)/10'
                         }`}
                         title={issues.map((issue) => issue.message).join('\n')}
                       >
-                        <IssueIcon className={`w-3.5 h-3.5 shrink-0 ${issueSeverity === 'error' ? 'text-rose-400' : issueSeverity === 'warning' ? 'text-amber-400' : 'text-sky-400'}`} />
-                        <span className={`text-[10px] font-semibold ${issueSeverity === 'error' ? 'text-rose-300' : issueSeverity === 'warning' ? 'text-amber-300' : 'text-sky-300'}`}>
+                        <IssueIcon className={`w-3.5 h-3.5 shrink-0 ${issueSeverity === 'error' ? 'text-(--op-danger)' : issueSeverity === 'warning' ? 'text-(--op-warning)' : 'text-(--op-accent-alt)'}`} />
+                        <span className={`text-[10px] font-semibold ${issueSeverity === 'error' ? 'text-(--op-danger)' : issueSeverity === 'warning' ? 'text-(--op-warning)' : 'text-(--op-accent-alt)'}`}>
                           {issues.length}
                         </span>
                         <span
                           className={`text-[10px] truncate max-w-[100px] ${
-                            hasError ? 'text-rose-400' : 'text-[#F59E0B]'
+                            hasError ? 'text-(--op-danger)' : 'text-(--op-warning)'
                           }`}
                         >
                           {pluralIssues.length > 0 ? `${pluralIssues.length} ${t('table.pluralIssues')}` : t(`table.${issueSeverity}`)}
                         </span>
                       </div>
                     ) : (
-                      <span className="text-[#4ADE80] text-[10px]">{t('table.valid')}</span>
+                      <span className="text-(--op-success) text-[10px]">{t('table.valid')}</span>
                     )}
                   </td>
 
@@ -294,8 +294,8 @@ export const StringListTable: React.FC<StringListTableProps> = ({
                       {!isPotTemplate && (
                         <button
                           onClick={(e) => onToggleFuzzy(entry.id, e)}
-                          className={`p-1 rounded hover:bg-[#2D3139] ${
-                            isFuzzy ? 'text-[#F59E0B]' : 'text-[#64748B] hover:text-[#E2E8F0]'
+                          className={`p-1 rounded hover:bg-(--op-border) ${
+                            isFuzzy ? 'text-(--op-warning)' : 'text-(--op-text-muted) hover:text-(--op-text-primary)'
                           }`}
                           title="Toggle fuzzy status"
                         >
@@ -304,7 +304,7 @@ export const StringListTable: React.FC<StringListTableProps> = ({
                       )}
                       <button
                         onClick={(e) => onDeleteEntry(entry.id, e)}
-                        className="p-1 rounded hover:bg-rose-950/40 text-[#64748B] hover:text-[#EF4444]"
+                        className="p-1 rounded hover:bg-rose-950/40 text-(--op-text-muted) hover:text-(--op-danger)"
                         title={t('table.delete')}
                       >
                         <Trash2 className="w-3 h-3" />
@@ -317,7 +317,7 @@ export const StringListTable: React.FC<StringListTableProps> = ({
 
             {entries.length === 0 && (
               <tr>
-                <td colSpan={5} className="px-4 py-12 text-center text-[#64748B] font-sans">
+                <td colSpan={5} className="px-4 py-12 text-center text-(--op-text-muted) font-sans">
                   {t('table.noStrings')}
                 </td>
               </tr>

@@ -75,7 +75,7 @@ export const WorkspaceTabs: React.FC<WorkspaceTabsProps> = ({
   return (
     <div 
       ref={scrollRef}
-      className="flex items-center h-9 px-3 gap-1 bg-[#090B0E] border-b border-[#2D3139] overflow-x-auto no-scrollbar relative"
+      className="flex items-center h-9 px-3 gap-1 bg-(--op-bg-canvas) border-b border-(--op-border) overflow-x-auto no-scrollbar relative"
     >
       <div className="flex items-center gap-1 h-full w-max">
         {workspaces.map((ws) => {
@@ -89,15 +89,15 @@ export const WorkspaceTabs: React.FC<WorkspaceTabsProps> = ({
     key={ws.id}
     onPointerDown={(e) => handlePointerDown(ws.id, e)}
     onPointerEnter={() => handlePointerEnter(ws.id)}
-    className={`group relative flex items-center gap-2 px-3 h-full text-xs font-medium cursor-pointer transition-colors border-x border-[#2D3139] select-none ${
+    className={`group relative flex items-center gap-2 px-3 h-full text-xs font-medium cursor-pointer transition-colors border-x border-(--op-border) select-none ${
       isActive
-        ? 'bg-[#16191E] border-t-2 border-t-[#3B82F6] text-[#E2E8F0] shadow-xs'
-        : 'bg-[#090B0E] text-[#94A3B8] hover:bg-[#1C2128] hover:text-[#E2E8F0] border-t-2 border-t-transparent'
-    } ${isDragging ? 'opacity-50 !bg-[#1E293B]' : ''}`}
+        ? 'bg-(--op-bg-surface) border-t-2 border-t-(--op-accent) text-(--op-text-primary) shadow-xs'
+        : 'bg-(--op-bg-canvas) text-(--op-text-secondary) hover:bg-(--op-bg-raised) hover:text-(--op-text-primary) border-t-2 border-t-transparent'
+    } ${isDragging ? 'opacity-50 !bg-(--op-bg-active)' : ''}`}
   >
     <Layers 
       className={`w-3.5 h-3.5 shrink-0 pointer-events-none transition-colors -translate-y-0.5 ${
-        isActive ? 'text-[#38BDF8]' : 'text-[#64748B] group-hover:text-[#94A3B8]'
+        isActive ? 'text-(--op-accent-alt)' : 'text-(--op-text-muted) group-hover:text-(--op-text-secondary)'
       }`} 
     />
 
@@ -107,13 +107,13 @@ export const WorkspaceTabs: React.FC<WorkspaceTabsProps> = ({
 
     {ws.isModified && (
       <span 
-        className="w-1 h-1 rounded-full bg-[#38BDF8] shrink-0 pointer-events-none -translate-y-1 -translate-x-1.5" 
+        className="w-1 h-1 rounded-full bg-(--op-accent-alt) shrink-0 pointer-events-none -translate-y-1 -translate-x-1.5" 
         title="Unsaved changes"
       />
     )}
 
     <div className="flex items-center pointer-events-none">
-      <span className="text-[10px] px-1.5 py-0.5 rounded bg-[#090B0E] text-[#64748B] font-mono border border-[#2D3139]/60 leading-none">
+      <span className="text-[10px] px-1.5 py-0.5 rounded bg-(--op-bg-canvas) text-(--op-text-muted) font-mono border border-(--op-border)/60 leading-none">
         {poCount}L • {stringCount}S
       </span>
     </div>
@@ -123,7 +123,7 @@ export const WorkspaceTabs: React.FC<WorkspaceTabsProps> = ({
       <button
         onClick={(e) => onCloseWorkspace(ws.id, e)}
         onPointerDown={(e) => e.stopPropagation()}
-        className="p-1 rounded hover:bg-[#2D3139] text-[#64748B] hover:text-[#E2E8F0] transition-all opacity-0 group-hover:opacity-100 cursor-pointer ml-0.5"
+        className="p-1 rounded hover:bg-(--op-border) text-(--op-text-muted) hover:text-(--op-text-primary) transition-all opacity-0 group-hover:opacity-100 cursor-pointer ml-0.5"
         title="Close Workspace"
       >
         <X className="w-3 h-3 pointer-events-none" />
@@ -135,7 +135,7 @@ export const WorkspaceTabs: React.FC<WorkspaceTabsProps> = ({
 
         <button
           onClick={onNewWorkspace}
-          className="p-1 rounded hover:bg-[#1C2128] text-[#64748B] hover:text-[#3B82F6] transition-colors ml-1 cursor-pointer shrink-0"
+          className="p-1 rounded hover:bg-(--op-bg-raised) text-(--op-text-muted) hover:text-(--op-accent) transition-colors ml-1 cursor-pointer shrink-0"
           title="Create New Workspace"
         >
           <Plus className="w-3.5 h-3.5" />

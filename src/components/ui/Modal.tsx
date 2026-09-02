@@ -57,24 +57,24 @@ export const Modal: React.FC<ModalProps> = ({
 
       {/* Modal Window */}
       <div 
-        className={`relative flex flex-col bg-[#16191E] border border-[#2D3139] rounded-xl shadow-2xl overflow-hidden w-full ${maxWidth} max-h-full transition-all duration-200 ease-out transform ${
+        className={`relative flex flex-col bg-(--op-bg-surface) border border-(--op-border) rounded-xl shadow-2xl overflow-hidden w-full ${maxWidth} max-h-full transition-all duration-200 ease-out transform ${
           isAnimating ? 'opacity-100 scale-100 translate-y-0' : 'opacity-0 scale-95 translate-y-4'
         }`}
       >
         {/* Header */}
-        <div className={`px-5 py-4 border-b border-[#2D3139] flex items-start justify-between shrink-0 ${
-          headerGradient ? 'bg-gradient-to-b from-[#1C2128] to-[#16191E]' : 'bg-[#1C2128]'
+        <div className={`px-5 py-4 border-b border-(--op-border) flex items-start justify-between shrink-0 ${
+          headerGradient ? 'bg-gradient-to-b from-(--op-bg-raised) to-(--op-bg-surface)' : 'bg-(--op-bg-raised)'
         }`}>
           <div className="flex items-center gap-3">
             {icon && (
-              <div className="p-1.5 rounded-lg bg-[#3B82F61A] text-[#3B82F6] border border-[#3B82F633] shrink-0">
+              <div className="p-1.5 rounded-lg bg-(--op-accent)/10 text-(--op-accent) border border-(--op-accent)/20 shrink-0">
                 {icon}
               </div>
             )}
             <div>
               <h2 className="text-sm font-bold text-white tracking-wide">{title}</h2>
               {subtitle && (
-                <div className="text-[11px] text-[#94A3B8] mt-0.5 leading-tight font-mono">
+                <div className="text-[11px] text-(--op-text-secondary) mt-0.5 leading-tight font-mono">
                   {subtitle}
                 </div>
               )}
@@ -83,20 +83,20 @@ export const Modal: React.FC<ModalProps> = ({
           
           <button
             onClick={onClose}
-            className="p-1.5 rounded-lg text-[#94A3B8] hover:text-white hover:bg-[#2D3748] transition-colors cursor-pointer shrink-0 ml-4"
+            className="p-1.5 rounded-lg text-(--op-text-secondary) hover:text-white hover:bg-(--op-bg-raised-hover) transition-colors cursor-pointer shrink-0 ml-4"
           >
             <X className="w-4 h-4" />
           </button>
         </div>
 
         {/* Scrollable Body */}
-        <div className="flex-1 overflow-y-auto p-5 custom-scrollbar text-xs bg-[#16191E]">
+        <div className="flex-1 overflow-y-auto p-5 custom-scrollbar text-xs bg-(--op-bg-surface)">
           {children}
         </div>
 
         {/* Optional Footer */}
         {footer && (
-          <div className="px-5 py-3 border-t border-[#2D3139] bg-[#090B0E] flex items-center justify-between shrink-0">
+          <div className="px-5 py-3 border-t border-(--op-border) bg-(--op-bg-canvas) flex items-center justify-between shrink-0">
             {footer}
           </div>
         )}

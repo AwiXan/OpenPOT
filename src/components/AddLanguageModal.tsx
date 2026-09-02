@@ -62,14 +62,14 @@ export const AddLanguageModal: React.FC<AddLanguageModalProps> = ({
       <button
         type="button"
         onClick={onClose}
-        className="px-3.5 py-1.5 rounded bg-[#1C2128] hover:bg-[#2D3748] text-[#94A3B8] hover:text-[#E2E8F0] border border-[#2D3139] cursor-pointer transition-colors"
+        className="px-3.5 py-1.5 rounded bg-(--op-bg-raised) hover:bg-(--op-bg-raised-hover) text-(--op-text-secondary) hover:text-(--op-text-primary) border border-(--op-border) cursor-pointer transition-colors"
       >
         {t('common.cancel')}
       </button>
       <button
         type="submit"
         form="add-lang-form"
-        className="px-4 py-1.5 rounded bg-[#3B82F6] hover:bg-[#2563EB] text-white font-semibold shadow-lg shadow-blue-500/20 cursor-pointer transition-all"
+        className="px-4 py-1.5 rounded bg-(--op-accent) hover:bg-(--op-accent-strong) text-white font-semibold shadow-lg shadow-(--op-accent)/20 cursor-pointer transition-all"
       >
         {createButtonText}
       </button>
@@ -87,10 +87,10 @@ export const AddLanguageModal: React.FC<AddLanguageModalProps> = ({
     >
       <form id="add-lang-form" onSubmit={handleSubmit} className="space-y-4 text-xs">
         <div>
-          <label className="block text-[#E2E8F0] font-medium mb-1.5">
+          <label className="block text-(--op-text-primary) font-medium mb-1.5">
             {t('addLang.chooseLanguage') || 'Choose Language:'}
           </label>
-          <div className="grid grid-cols-2 gap-1.5 max-h-48 overflow-y-auto p-1 bg-[#090B0E] rounded border border-[#2D3139] custom-scrollbar">
+          <div className="grid grid-cols-2 gap-1.5 max-h-48 overflow-y-auto p-1 bg-(--op-bg-canvas) rounded border border-(--op-border) custom-scrollbar">
             {LANGUAGE_PRESETS.map((preset) => {
               const isAlreadyAdded = existingLanguages.includes(preset.code);
               const isSelected = !isCustom && selectedPreset === preset.code;
@@ -106,10 +106,10 @@ export const AddLanguageModal: React.FC<AddLanguageModalProps> = ({
                   }}
                   className={`p-2 rounded text-left transition-all flex items-center justify-between cursor-pointer ${
                     isAlreadyAdded
-                      ? 'opacity-40 cursor-not-allowed bg-[#16191E]/40 text-[#64748B]'
+                      ? 'opacity-40 cursor-not-allowed bg-(--op-bg-surface)/40 text-(--op-text-muted)'
                       : isSelected
-                      ? 'bg-[#3B82F6] text-white font-medium shadow-xs'
-                      : 'text-[#94A3B8] hover:bg-[#1C2128] hover:text-[#E2E8F0]'
+                      ? 'bg-(--op-accent) text-white font-medium shadow-xs'
+                      : 'text-(--op-text-secondary) hover:bg-(--op-bg-raised) hover:text-(--op-text-primary)'
                   }`}
                 >
                   <span className="truncate text-xs">{preset.name}</span>
@@ -127,17 +127,17 @@ export const AddLanguageModal: React.FC<AddLanguageModalProps> = ({
               type="checkbox"
               checked={isCustom}
               onChange={(e) => setIsCustom(e.target.checked)}
-              className="rounded bg-[#16191E] border-[#2D3139] text-[#3B82F6] focus:ring-0"
+              className="rounded bg-(--op-bg-surface) border-(--op-border) text-(--op-accent) focus:ring-0"
             />
-            <span className="text-[#94A3B8]">
+            <span className="text-(--op-text-secondary)">
               {t('addLang.customCheckbox') || 'Specify custom ISO language code'}
             </span>
           </label>
 
           {isCustom && (
-            <div className="grid grid-cols-2 gap-2 bg-[#090B0E] p-2.5 rounded border border-[#2D3139]">
+            <div className="grid grid-cols-2 gap-2 bg-(--op-bg-canvas) p-2.5 rounded border border-(--op-border)">
               <div>
-                <label className="text-[10px] text-[#64748B] block mb-1">
+                <label className="text-[10px] text-(--op-text-muted) block mb-1">
                   {t('addLang.codeLabel') || 'Code (e.g. sv_SE):'}
                 </label>
                 <input
@@ -145,11 +145,11 @@ export const AddLanguageModal: React.FC<AddLanguageModalProps> = ({
                   required={isCustom}
                   value={customCode}
                   onChange={(e) => setCustomCode(e.target.value)}
-                  className="w-full bg-[#16191E] border border-[#2D3139] rounded px-2 py-1 text-xs text-[#E2E8F0] font-mono focus:border-[#3B82F6] outline-none"
+                  className="w-full bg-(--op-bg-surface) border border-(--op-border) rounded px-2 py-1 text-xs text-(--op-text-primary) font-mono focus:border-(--op-accent) outline-none"
                 />
               </div>
               <div>
-                <label className="text-[10px] text-[#64748B] block mb-1">
+                <label className="text-[10px] text-(--op-text-muted) block mb-1">
                   {t('addLang.nameLabel') || 'Language Name:'}
                 </label>
                 <input
@@ -157,7 +157,7 @@ export const AddLanguageModal: React.FC<AddLanguageModalProps> = ({
                   required={isCustom}
                   value={customName}
                   onChange={(e) => setCustomName(e.target.value)}
-                  className="w-full bg-[#16191E] border border-[#2D3139] rounded px-2 py-1 text-xs text-[#E2E8F0] focus:border-[#3B82F6] outline-none"
+                  className="w-full bg-(--op-bg-surface) border border-(--op-border) rounded px-2 py-1 text-xs text-(--op-text-primary) focus:border-(--op-accent) outline-none"
                 />
               </div>
             </div>
@@ -165,14 +165,14 @@ export const AddLanguageModal: React.FC<AddLanguageModalProps> = ({
         </div>
 
         {/* Plural Rule Preview */}
-        <div className="bg-[#090B0E] p-3 rounded border border-[#2D3139] space-y-1 text-[#94A3B8]">
+        <div className="bg-(--op-bg-canvas) p-3 rounded border border-(--op-border) space-y-1 text-(--op-text-secondary)">
           <div className="flex items-center justify-between text-[11px]">
-            <span className="font-semibold text-[#E2E8F0]">
+            <span className="font-semibold text-(--op-text-primary)">
               {t('addLang.pluralFormula') || 'Plural Forms Formula:'}
             </span>
-            <span className="font-mono text-[#3B82F6]">{formsCountText}</span>
+            <span className="font-mono text-(--op-accent)">{formsCountText}</span>
           </div>
-          <div className="font-mono text-[10px] text-[#94A3B8] break-all bg-[#16191E] p-1.5 rounded border border-[#2D3139]">
+          <div className="font-mono text-[10px] text-(--op-text-secondary) break-all bg-(--op-bg-surface) p-1.5 rounded border border-(--op-border)">
             {pluralRule.formula}
           </div>
         </div>

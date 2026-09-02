@@ -87,12 +87,12 @@ export const LanguageSelectorBar: React.FC<LanguageSelectorBarProps> = ({
   };
 
   return (
-    <div className="bg-[#16191E] border-b border-[#2D3139] px-2 py-1.5 flex items-center justify-between gap-2 select-none relative group">
+    <div className="bg-(--op-bg-surface) border-b border-(--op-border) px-2 py-1.5 flex items-center justify-between gap-2 select-none relative group">
       {/* Scroll Left Button */}
       {canScrollLeft && (
         <button
           onClick={() => handleScroll('left')}
-          className="absolute left-1 z-20 p-1 rounded-md bg-[#090B0E]/95 hover:bg-[#1E293B] border border-[#2D3139] text-[#38BDF8] shadow-md transition-all cursor-pointer"
+          className="absolute left-1 z-20 p-1 rounded-md bg-(--op-bg-canvas)/95 hover:bg-(--op-bg-active) border border-(--op-border) text-(--op-accent-alt) shadow-md transition-all cursor-pointer"
           title={t('langBar.scrollLeft')}
         >
           <ChevronLeft className="w-3.5 h-3.5" />
@@ -119,21 +119,21 @@ export const LanguageSelectorBar: React.FC<LanguageSelectorBarProps> = ({
               }}
               className={`flex items-center gap-2 px-3 py-1.5 rounded text-xs transition-all border cursor-pointer shrink-0 ${
                 isPotTabActive
-                  ? 'bg-[#1E293B] border-[#3B82F6] text-[#E2E8F0] font-semibold shadow-xs'
-                  : 'bg-[#090B0E] border-[#2D3139] text-[#64748B] hover:bg-[#1C2128] hover:text-[#E2E8F0] opacity-60 hover:opacity-100'
+                  ? 'bg-(--op-bg-active) border-(--op-accent) text-(--op-text-primary) font-semibold shadow-xs'
+                  : 'bg-(--op-bg-canvas) border-(--op-border) text-(--op-text-muted) hover:bg-(--op-bg-raised) hover:text-(--op-text-primary) opacity-60 hover:opacity-100'
               }`}
               title={t('langBar.potTooltip')}
             >
-              <FileText className={`w-3.5 h-3.5 ${isPotTabActive ? 'text-[#3B82F6]' : 'text-[#64748B]'}`} />
+              <FileText className={`w-3.5 h-3.5 ${isPotTabActive ? 'text-(--op-accent)' : 'text-(--op-text-muted)'}`} />
               <span className="font-mono">{workspace.potFile.filename}</span>
-              <span className="px-1.5 py-0.2 rounded bg-[#090B0E] text-[10px] font-mono text-[#94A3B8] border border-[#2D3139]">
+              <span className="px-1.5 py-0.2 rounded bg-(--op-bg-canvas) text-[10px] font-mono text-(--op-text-secondary) border border-(--op-border)">
                 {potTotal} {t('langBar.keys')}
               </span>
             </button>
           );
         })()}
 
-        <div className="h-4 w-[1px] bg-[#2D3139] mx-0.5 shrink-0" />
+        <div className="h-4 w-[1px] bg-(--op-border) mx-0.5 shrink-0" />
 
         {/* PO Target Language Tabs */}
         {workspace.poFiles.map((po) => {
@@ -168,34 +168,34 @@ export const LanguageSelectorBar: React.FC<LanguageSelectorBarProps> = ({
               }}
               className={`group/tab relative flex items-center gap-2 px-2.5 py-1.5 rounded text-xs cursor-pointer transition-all border shrink-0 ${
                 isPoTabActive
-                  ? 'bg-[#1E293B] border-[#3B82F6] text-[#E2E8F0] font-semibold shadow-xs'
-                  : 'bg-[#090B0E] border-[#2D3139] text-[#64748B] hover:bg-[#1C2128] hover:text-[#E2E8F0] opacity-60 hover:opacity-100'
+                  ? 'bg-(--op-bg-active) border-(--op-accent) text-(--op-text-primary) font-semibold shadow-xs'
+                  : 'bg-(--op-bg-canvas) border-(--op-border) text-(--op-text-muted) hover:bg-(--op-bg-raised) hover:text-(--op-text-primary) opacity-60 hover:opacity-100'
               }`}
             >
               <div className="flex items-center gap-1.5">
-                <span className="uppercase font-mono font-bold text-[10px] px-1.5 py-0.2 rounded bg-[#16191E] text-[#38BDF8] border border-[#2D3139]">
+                <span className="uppercase font-mono font-bold text-[10px] px-1.5 py-0.2 rounded bg-(--op-bg-surface) text-(--op-accent-alt) border border-(--op-border)">
                   {po.language}
                 </span>
-                <span className="text-[#E2E8F0] font-medium whitespace-nowrap">{po.languageName}</span>
+                <span className="text-(--op-text-primary) font-medium whitespace-nowrap">{po.languageName}</span>
               </div>
 
               {/* Progress Bar & Indicators */}
               <div className="flex items-center gap-1.5 pl-0.5">
-                <div className="w-7 bg-[#090B0E] rounded-full h-1 overflow-hidden border border-[#2D3139]/40 shrink-0">
+                <div className="w-7 bg-(--op-bg-canvas) rounded-full h-1 overflow-hidden border border-(--op-border)/40 shrink-0">
                   <div
                     className={`h-full transition-all ${
-                      isComplete ? 'bg-[#4ADE80]' : pct > 50 ? 'bg-[#3B82F6]' : 'bg-[#F59E0B]'
+                      isComplete ? 'bg-(--op-success)' : pct > 50 ? 'bg-(--op-accent)' : 'bg-(--op-warning)'
                     }`}
                     style={{ width: `${pct}%` }}
                   />
                 </div>
-                <span className={`text-[10px] font-mono whitespace-nowrap ${isComplete ? 'text-[#4ADE80] font-semibold' : 'text-[#64748B]'}`}>
+                <span className={`text-[10px] font-mono whitespace-nowrap ${isComplete ? 'text-(--op-success) font-semibold' : 'text-(--op-text-muted)'}`}>
                   {pct}%
                 </span>
 
                 {untranslated > 0 && (
                   <span
-                    className="px-1 py-0.2 rounded bg-[#EF44441A] text-[#EF4444] text-[9px] font-mono border border-[#EF444433] shrink-0"
+                    className="px-1 py-0.2 rounded bg-(--op-danger)/10 text-(--op-danger) text-[9px] font-mono border border-(--op-danger)/20 shrink-0"
                     title={`${untranslated} untranslated`}
                   >
                     {untranslated}
@@ -204,7 +204,7 @@ export const LanguageSelectorBar: React.FC<LanguageSelectorBarProps> = ({
 
                 {fuzzy > 0 && (
                   <span
-                    className="px-1 py-0.2 rounded bg-[#F59E0B1A] text-[#F59E0B] text-[9px] font-mono border border-[#F59E0B33] shrink-0"
+                    className="px-1 py-0.2 rounded bg-(--op-warning)/10 text-(--op-warning) text-[9px] font-mono border border-(--op-warning)/20 shrink-0"
                     title={`${fuzzy} fuzzy`}
                   >
                     {fuzzy}f
@@ -213,25 +213,25 @@ export const LanguageSelectorBar: React.FC<LanguageSelectorBarProps> = ({
               </div>
 
               {/* Quick Actions (Download .PO, Download .MO, Delete) */}
-              <div className="flex items-center gap-0.5 opacity-40 group-hover/tab:opacity-100 transition-opacity pl-1 border-l border-[#2D3139] shrink-0">
+              <div className="flex items-center gap-0.5 opacity-40 group-hover/tab:opacity-100 transition-opacity pl-1 border-l border-(--op-border) shrink-0">
                 {/* <button
                   onClick={(e) => onDownloadPo(po, e)}
-                  className="p-0.5 rounded hover:bg-[#2D3139] text-[#94A3B8] hover:text-[#E2E8F0]"
+                  className="p-0.5 rounded hover:bg-(--op-border) text-(--op-text-secondary) hover:text-(--op-text-primary)"
                   title={t('langBar.downloadPo')}
                 >
-                  <Download className="w-3 h-3 text-[#3B82F6]" />
+                  <Download className="w-3 h-3 text-(--op-accent)" />
                 </button>
                 <button
                   onClick={(e) => onDownloadMo(po, e)}
-                  className="p-0.5 rounded hover:bg-[#2D3139] text-[#94A3B8] hover:text-[#4ADE80]"
+                  className="p-0.5 rounded hover:bg-(--op-border) text-(--op-text-secondary) hover:text-(--op-success)"
                   title={t('langBar.downloadMo')}
                 >
-                  <Binary className="w-3 h-3 text-[#4ADE80]" />
+                  <Binary className="w-3 h-3 text-(--op-success)" />
                 </button> */}
                 {workspace.poFiles.length > 1 && (
                   <button
                     onClick={(e) => onDeleteLanguage(po.id, e)}
-                    className="p-0.5 rounded hover:bg-red-500/20 text-[#64748B] hover:text-[#EF4444]"
+                    className="p-0.5 rounded hover:bg-red-500/20 text-(--op-text-muted) hover:text-(--op-danger)"
                     title={t('langBar.removeLang')}
                   >
                     <Trash2 className="w-3 h-3" />
@@ -246,9 +246,9 @@ export const LanguageSelectorBar: React.FC<LanguageSelectorBarProps> = ({
         <button
           id="btn-langbar-add-language"
           onClick={onAddLanguage}
-          className="flex items-center gap-1 px-2.5 py-1.5 rounded text-xs bg-[#090B0E] hover:bg-[#1C2128] text-[#94A3B8] hover:text-[#4ADE80] border border-dashed border-[#2D3139] transition-colors cursor-pointer shrink-0 whitespace-nowrap"
+          className="flex items-center gap-1 px-2.5 py-1.5 rounded text-xs bg-(--op-bg-canvas) hover:bg-(--op-bg-raised) text-(--op-text-secondary) hover:text-(--op-success) border border-dashed border-(--op-border) transition-colors cursor-pointer shrink-0 whitespace-nowrap"
         >
-          <Plus className="w-3.5 h-3.5 text-[#4ADE80]" />
+          <Plus className="w-3.5 h-3.5 text-(--op-success)" />
           <span>{t('langBar.addLanguage')}</span>
         </button>
       </div>
@@ -257,16 +257,16 @@ export const LanguageSelectorBar: React.FC<LanguageSelectorBarProps> = ({
       {canScrollRight && (
         <button
           onClick={() => handleScroll('right')}
-          className="absolute right-1 z-20 p-1 rounded-md bg-[#090B0E]/95 hover:bg-[#1E293B] border border-[#2D3139] text-[#38BDF8] shadow-md transition-all cursor-pointer"
+          className="absolute right-1 z-20 p-1 rounded-md bg-(--op-bg-canvas)/95 hover:bg-(--op-bg-active) border border-(--op-border) text-(--op-accent-alt) shadow-md transition-all cursor-pointer"
           title={t('langBar.scrollRight')}
         >
           <ChevronRight className="w-3.5 h-3.5" />
         </button>
       )}
 
-      <div className="text-[10px] text-[#64748B] font-mono flex items-center gap-2 shrink-0 pl-2 border-l border-[#2D3139]/60 hidden md:flex">
+      <div className="text-[10px] text-(--op-text-muted) font-mono flex items-center gap-2 shrink-0 pl-2 border-l border-(--op-border)/60 hidden md:flex">
         <span className="flex items-center gap-1.5">
-          <span className="w-1.5 h-1.5 rounded-full bg-[#4ADE80] animate-pulse" />
+          <span className="w-1.5 h-1.5 rounded-full bg-(--op-success) animate-pulse" />
           <span>{t('langBar.autoReady')}</span>
         </span>
       </div>

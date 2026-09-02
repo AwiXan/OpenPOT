@@ -6,7 +6,7 @@
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { Workspace, FilterStatus, LintIssue, AppSettings, PoFileRecord, PoEntry } from './types/gettext';
 import { INITIAL_SAMPLE_WORKSPACES } from './lib/sampleWorkspaces';
-import { serializePoFile, parsePoContent, linkPoEntriesToPot } from './lib/poParser';
+import { serializePoFile, parsePoContent, linkPoEntriesToPot, generateEntryId } from './lib/poParser';
 import { compileMoBinary } from './lib/moCompiler';
 import { getPluralRuleForLanguage } from './lib/pluralEngine';
 import { lintEntry } from './lib/linter';
@@ -41,6 +41,8 @@ import { AboutModal } from './components/AboutModal';
 import { TransferModal } from './components/TransferModal';
 
 const DEFAULT_SETTINGS: AppSettings = {
+  theme: 'obsidian',
+  themeSaturation: 0.5,
   fuzzyMatchingThreshold: 80,
   autoMarkFuzzyUnder100: true,
   authorName: 'Translator',
@@ -115,6 +117,14 @@ export default function App() {
       console.warn('Failed to save settings:', e);
     }
   }, [settings]);
+
+  useEffect(() => {
+    document.documentElement.dataset.theme = settings.theme || 'obsidian';
+  }, [settings.theme]);
+
+  useEffect(() => {
+    document.documentElement.style.setProperty('--op-tint', String(settings.themeSaturation ?? 0.5));
+  }, [settings.themeSaturation]);
 
   const [zoomLevel, setZoomLevel] = useState<number>(() => {
     const saved = localStorage.getItem('openpot_zoom');
@@ -722,16 +732,16 @@ export default function App() {
 
       <footer className="footer-bar">
         <div className="flex items-center gap-3 overflow-hidden">
-          <span className="text-[#8B949E]">UTF-8</span><span className="text-[#21262D]">|</span>
-          <span className="text-[#C9D1D9] truncate max-w-[160px]" title={isPotActive ? currentWorkspace.potFile.filename : currentPoFile?.filename}>{isPotActive ? currentWorkspace.potFile.filename : currentPoFile?.filename || 'workspace'}</span>
-          {currentEntry && (<><span className="text-[#21262D]">|</span><span className="truncate max-w-[180px]" title={currentEntry.msgid}>Key: {currentEntry.msgid}</span></>)}
-          {localDirState.isConnected && (<><span className="text-[#21262D]">|</span><span className="text-[#7EE787] truncate max-w-[300px]" title={localDirState.dirName}>Disk: {localDirState.dirName} {settings.autoCompileMoOnSave ? '(auto .mo)' : ''}</span></>)}
-          <span className="text-[#21262D]">|</span><span className="text-[#79C0FF]">git:{currentWorkspace.git?.branch || 'main'}</span>
+          <span className="text-(--op-text-faint)">UTF-8</span><span className="text-(--op-border-subtle)">|</span>
+          <span className="text-(--op-text-primary) truncate max-w-[160px]" title={isPotActive ? currentWorkspace.potFile.filename : currentPoFile?.filename}>{isPotActive ? currentWorkspace.potFile.filename : currentPoFile?.filename || 'workspace'}</span>
+          {currentEntry && (<><span className="text-(--op-border-subtle)">|</span><span className="truncate max-w-[180px]" title={currentEntry.msgid}>Key: {currentEntry.msgid}</span></>)}
+          {localDirState.isConnected && (<><span className="text-(--op-border-subtle)">|</span><span className="text-[#7EE787] truncate max-w-[300px]" title={localDirState.dirName}>Disk: {localDirState.dirName} {settings.autoCompileMoOnSave ? '(auto .mo)' : ''}</span></>)}
+          <span className="text-(--op-border-subtle)">|</span><span className="text-[#79C0FF]">git:{currentWorkspace.git?.branch || 'main'}</span>
         </div>
-        <div className="flex items-center gap-3 shrink-0 text-[#8B949E]">
+        <div className="flex items-center gap-3 shrink-0 text-(--op-text-faint)">
           <span>scheme: {settings.poNamingScheme || 'domain_lang'}</span><span>|</span>
           <span>tm: {settings.fuzzyMatchingThreshold}%</span><span>|</span>
-          <span className="text-[#C9D1D9]">{stats.total} total <span className="text-[#8B949E]">•</span> {stats.untranslated} untranslated <span className="text-[#8B949E]">•</span> {stats.fuzzy} fuzzy</span>
+          <span className="text-(--op-text-primary)">{stats.total} total <span className="text-(--op-text-faint)">•</span> {stats.untranslated} untranslated <span className="text-(--op-text-faint)">•</span> {stats.fuzzy} fuzzy</span>
         </div>
       </footer>
 
@@ -744,6 +754,62 @@ export default function App() {
           if (isPotActive) return { ...w, potFile: { ...w.potFile, header: newHeader, entries: newEntries, isModified: true }, isModified: true };
           return { ...w, poFiles: w.poFiles.map((p) => p.id === currentPoFile?.id ? { ...p, header: newHeader, entries: newEntries, isModified: true } : p), isModified: true };
         }));
+      }} onApplyJsonTranslations={(entriesByLanguage) => {
+        pushHistorySnapshot(currentWorkspace);
+        setWorkspaces((prev) => prev.map((w) => {
+          if (w.id !== activeWorkspaceId) return w;
+
+          // The flat JSON matrix only carries msgid -> {language: msgstr}, so
+          // saving it only ever updates translation text for keys that already
+          // exist (matched by msgid) and adds brand-new msgids as fresh,
+          // auto-categorized entries. Keys missing from the edited JSON are
+          // left untouched - JSON editing is additive, never destructive.
+          const existingMsgids = new Set(w.potFile.entries.map((e) => e.msgid));
+          const allEditedMsgids = new Set<string>();
+          Object.values(entriesByLanguage).forEach((list) => list.forEach((e) => allEditedMsgids.add(e.msgid)));
+
+          const newMsgids = Array.from(allEditedMsgids).filter((id) => !existingMsgids.has(id));
+          const newPotEntries: PoEntry[] = newMsgids.map((msgid) => {
+            const withPlural = Object.values(entriesByLanguage).flat().find((e) => e.msgid === msgid && e.msgidPlural);
+            return {
+              id: generateEntryId(),
+              msgid,
+              msgidPlural: withPlural?.msgidPlural,
+              msgstr: withPlural?.msgidPlural ? ['', ''] : [''],
+              comments: [], extractedComments: [], references: [], flags: [],
+            };
+          });
+
+          const updatedPoFiles = w.poFiles.map((po) => {
+            const incoming = entriesByLanguage[po.language];
+            let poEntries = po.entries;
+            if (incoming) {
+              const byMsgid = new Map(incoming.map((e) => [e.msgid, e]));
+              poEntries = poEntries.map((e) => {
+                const match = byMsgid.get(e.msgid);
+                return match ? { ...e, msgstr: match.msgstr } : e;
+              });
+            }
+            if (newPotEntries.length > 0) {
+              const rule = getPluralRuleForLanguage(po.language, po.header.pluralForms);
+              const appended = newPotEntries.map((potEntry) => {
+                const match = incoming?.find((e) => e.msgid === potEntry.msgid);
+                const emptyMsgstr = potEntry.msgidPlural ? Array.from({ length: rule.nplurals }, () => '') : [''];
+                return { ...potEntry, msgstr: match ? match.msgstr : emptyMsgstr };
+              });
+              poEntries = [...poEntries, ...appended];
+            }
+            return { ...po, entries: poEntries, isModified: true };
+          });
+
+          return {
+            ...w,
+            potFile: { ...w.potFile, entries: [...w.potFile.entries, ...newPotEntries], isModified: newPotEntries.length > 0 || w.potFile.isModified },
+            poFiles: updatedPoFiles,
+            isModified: true,
+          };
+        }));
+        showToast(t('rawPo.jsonApplied'), 'success');
       }} />
       <MoCompilerModal isOpen={isMoCompilerModalOpen} onClose={() => setIsMoCompilerModalOpen(false)} workspace={currentWorkspace} hasConnectedFolder={localDirState.isConnected} onExportMo={handleExportMo} />
       <BatchOperationsModal isOpen={isBatchModalOpen} onClose={() => setIsBatchModalOpen(false)} workspace={currentWorkspace} onBatchApplyTm={handleBatchApplyTm} onClearAllFuzzy={handleClearAllFuzzy} onMarkUntranslatedFuzzy={handleMarkUntranslatedFuzzy} fuzzyThreshold={settings.fuzzyMatchingThreshold} />

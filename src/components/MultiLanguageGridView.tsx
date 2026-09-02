@@ -133,14 +133,14 @@ export const MultiLanguageGridView: React.FC<MultiLanguageGridViewProps> = ({
           const colCells = document.querySelectorAll(`.${targetColClass}`);
 
           colCells.forEach((cell) => {
-            cell.classList.add('!bg-[#3B82F620]');
-            setTimeout(() => cell.classList.remove('!bg-[#3B82F620]'), 1000);
+            cell.classList.add('!bg-(--op-accent)/13');
+            setTimeout(() => cell.classList.remove('!bg-(--op-accent)/13'), 1000);
           });
 
           const activeCell = document.getElementById(`matrix-cell-${activeEntryId}-${workspace.activeFileId}`);
           if (activeCell) {
-            activeCell.classList.add('!bg-[#3B82F640]');
-            setTimeout(() => activeCell.classList.remove('!bg-[#3B82F640]'), 1000);
+            activeCell.classList.add('!bg-(--op-accent)/25');
+            setTimeout(() => activeCell.classList.remove('!bg-(--op-accent)/25'), 1000);
           }
         }
       }, 150);
@@ -196,20 +196,20 @@ export const MultiLanguageGridView: React.FC<MultiLanguageGridViewProps> = ({
       <tr
         id={`matrix-row-${potEntry.id}`}
         key={potEntry.id}
-        className="border-b border-[#16191E] hover:bg-[#5070a320] transition-colors duration-500"
+        className="border-b border-(--op-bg-surface) hover:bg-[#5070a320] transition-colors duration-500"
       >
         {/* Source Column */}
         {!hiddenMatrixFiles?.has('pot') && (
-          <td id={`matrix-cell-${potEntry.id}-pot`} className="matrix-col-pot p-3 border-r border-[#2D3139] bg-[#090B0E] align-top w-80 transition-colors duration-700">
+          <td id={`matrix-cell-${potEntry.id}-pot`} className="matrix-col-pot p-3 border-r border-(--op-border) bg-(--op-bg-canvas) align-top w-80 transition-colors duration-700">
             <div className="flex items-start justify-between gap-1 mb-1">
-              <div className="font-semibold text-[#E2E8F0] select-text break-words whitespace-pre-wrap leading-relaxed">
+              <div className="font-semibold text-(--op-text-primary) select-text break-words whitespace-pre-wrap leading-relaxed">
                 {toDisplayText(potEntry.msgid, showWhitespaceMarks)}
               </div>
               
               <div className="flex items-center gap-1 shrink-0">
                 {showWhitespaceMarks && hasNewlines && (
                   <span
-                    className="px-1 py-0.2 rounded bg-[#3B82F622] text-[#38BDF8] border border-[#3B82F644] text-[9px] font-mono select-none"
+                    className="px-1 py-0.2 rounded bg-(--op-accent)/13 text-(--op-accent-alt) border border-(--op-accent)/27 text-[9px] font-mono select-none"
                     title={`${newlineCount} newlines in source key`}
                   >
                     ↵ {newlineCount}\n
@@ -217,7 +217,7 @@ export const MultiLanguageGridView: React.FC<MultiLanguageGridViewProps> = ({
                 )}
                 <button
                   onClick={() => onNavigateToEditor(potEntry.id, 'pot')}
-                  className="p-1 rounded bg-[#16191E] hover:bg-[#1E293B] text-[#64748B] hover:text-[#38BDF8] border border-[#2D3139] transition-colors cursor-pointer"
+                  className="p-1 rounded bg-(--op-bg-surface) hover:bg-(--op-bg-active) text-(--op-text-muted) hover:text-(--op-accent-alt) border border-(--op-border) transition-colors cursor-pointer"
                   title={t('matrix.toEditor')}
                 >
                   <Edit3 className="w-3.5 h-3.5" />
@@ -226,13 +226,13 @@ export const MultiLanguageGridView: React.FC<MultiLanguageGridViewProps> = ({
             </div>
             
             {potEntry.msgidPlural && (
-              <div className="text-[10px] text-[#3B82F6] mt-1 whitespace-pre-wrap">
+              <div className="text-[10px] text-(--op-accent) mt-1 whitespace-pre-wrap">
                 <span className="font-bold">{t('editor.plural')}:</span> {potEntry.msgidPlural}
               </div>
             )}
             
             {potEntry.comments.length > 0 && (
-              <div className="text-[10px] text-[#64748B] font-sans italic mt-1 truncate">
+              <div className="text-[10px] text-(--op-text-muted) font-sans italic mt-1 truncate">
                 {potEntry.comments[0]}
               </div>
             )}
@@ -255,7 +255,7 @@ export const MultiLanguageGridView: React.FC<MultiLanguageGridViewProps> = ({
             <td
               key={po.id}
               id={`matrix-cell-${potEntry.id}-${po.id}`}
-              className={`matrix-col-${po.id} p-2.5 border-r border-[#2D3139] align-top bg-[#090B0E] transition-colors duration-700`}
+              className={`matrix-col-${po.id} p-2.5 border-r border-(--op-border) align-top bg-(--op-bg-canvas) transition-colors duration-700`}
             >
               <div className="space-y-1.5">
                 {currentMsgstr.map((strVal, idx) => {
@@ -266,7 +266,7 @@ export const MultiLanguageGridView: React.FC<MultiLanguageGridViewProps> = ({
                     <div key={idx} className="relative group/cell">
                       <div className="flex items-start gap-1">
                         {currentMsgstr.length > 1 && (
-                          <span className="text-[9px] font-mono text-[#64748B] w-5 shrink-0 pt-1">
+                          <span className="text-[9px] font-mono text-(--op-text-muted) w-5 shrink-0 pt-1">
                             [{idx}]
                           </span>
                         )}
@@ -289,13 +289,13 @@ export const MultiLanguageGridView: React.FC<MultiLanguageGridViewProps> = ({
                               }
                             }}
                             placeholder={`${t('matrix.translatePlaceholder')} (${po.language})...`}
-                            className={`w-full bg-[#16191E] border rounded px-2.5 py-1.5 text-xs font-mono text-[#E2E8F0] placeholder-[#64748B] focus:border-[#3B82F6] outline-none resize-y min-h-[44px] leading-relaxed transition-colors ${isFuzzy ? 'border-[#F59E0B]' : 'border-[#2D3139]'
+                            className={`w-full bg-(--op-bg-surface) border rounded px-2.5 py-1.5 text-xs font-mono text-(--op-text-primary) placeholder-(--op-text-muted) focus:border-(--op-accent) outline-none resize-y min-h-[44px] leading-relaxed transition-colors ${isFuzzy ? 'border-(--op-warning)' : 'border-(--op-border)'
                               }`}
                           />
 
                           {showWhitespaceMarks && valNewlineCount > 0 && (
                             <span
-                              className="absolute bottom-1 right-2 px-1 py-0.2 rounded bg-[#3B82F622] text-[#38BDF8] border border-[#3B82F633] text-[9px] font-mono select-none pointer-events-none"
+                              className="absolute bottom-1 right-2 px-1 py-0.2 rounded bg-(--op-accent)/13 text-(--op-accent-alt) border border-(--op-accent)/20 text-[9px] font-mono select-none pointer-events-none"
                               title={`${valNewlineCount} newlines`}
                             >
                               ↵ {valNewlineCount}\n
@@ -306,7 +306,7 @@ export const MultiLanguageGridView: React.FC<MultiLanguageGridViewProps> = ({
                         {/* To Editor */}
                         <button
                           onClick={() => onNavigateToEditor(potEntry.id, po.id)}
-                          className="p-1 rounded bg-[#16191E] hover:bg-[#1E293B] text-[#64748B] hover:text-[#38BDF8] border border-[#2D3139] transition-colors cursor-pointer shrink-0 mt-0.5"
+                          className="p-1 rounded bg-(--op-bg-surface) hover:bg-(--op-bg-active) text-(--op-text-muted) hover:text-(--op-accent-alt) border border-(--op-border) transition-colors cursor-pointer shrink-0 mt-0.5"
                           title={t('matrix.toEditor')}
                         >
                           <Edit3 className="w-3.5 h-3.5" />
@@ -324,17 +324,17 @@ export const MultiLanguageGridView: React.FC<MultiLanguageGridViewProps> = ({
   };
 
   return (
-    <div className="flex-1 flex flex-col bg-[#090B0E] overflow-hidden text-[#E2E8F0]">
+    <div className="flex-1 flex flex-col bg-(--op-bg-canvas) overflow-hidden text-(--op-text-primary)">
       {/* Header Info Bar */}
-      <div className="p-3 border-b border-[#2D3139] bg-[#16191E] flex flex-wrap items-center justify-between gap-3">
+      <div className="p-3 border-b border-(--op-border) bg-(--op-bg-surface) flex flex-wrap items-center justify-between gap-3">
         <div>
           <h2 className="text-xs font-bold text-white uppercase tracking-wider flex items-center gap-2">
             <span>{t('matrix.title')}</span>
-            <span className="px-1.5 py-0.2 rounded bg-[#3B82F61A] text-[#38BDF8] border border-[#3B82F633] text-[9px] font-mono lowercase">
+            <span className="px-1.5 py-0.2 rounded bg-(--op-accent)/10 text-(--op-accent-alt) border border-(--op-accent)/20 text-[9px] font-mono lowercase">
               \n multi-row editor
             </span>
           </h2>
-          <p className="text-[11px] text-[#94A3B8]">
+          <p className="text-[11px] text-(--op-text-secondary)">
             {t('matrix.subtitle')}
           </p>
         </div>
@@ -344,12 +344,12 @@ export const MultiLanguageGridView: React.FC<MultiLanguageGridViewProps> = ({
           <button
             onClick={() => setGroupByCategory(!groupByCategory)}
             className={`px-2.5 py-1.5 rounded text-xs flex items-center gap-1.5 border transition-all cursor-pointer ${groupByCategory
-              ? 'bg-[#1E293B] text-[#38BDF8] border-[#3B82F6] font-medium shadow-xs'
-              : 'bg-[#1C2128] hover:bg-[#2D3748] text-[#94A3B8] hover:text-[#E2E8F0] border-[#2D3139]'
+              ? 'bg-(--op-bg-active) text-(--op-accent-alt) border-(--op-accent) font-medium shadow-xs'
+              : 'bg-(--op-bg-raised) hover:bg-(--op-bg-raised-hover) text-(--op-text-secondary) hover:text-(--op-text-primary) border-(--op-border)'
               }`}
             title="Group strings by category in the matrix"
           >
-            <FolderTree className="w-3.5 h-3.5 text-[#38BDF8]" />
+            <FolderTree className="w-3.5 h-3.5 text-(--op-accent-alt)" />
             <span>{t('matrix.groupByCategory')}</span>
           </button>
 
@@ -360,36 +360,36 @@ export const MultiLanguageGridView: React.FC<MultiLanguageGridViewProps> = ({
               <DropdownMenu value={jumpCategory} onChange={(category) => { setJumpCategory(category); handleScrollToCategory(category); }} placeholder={t('matrix.jumpToCategory')} options={categorizedGroups.map(([catName, entries]) => ({ value: catName, label: `${catName} (${entries.length})` }))} className="min-w-[190px]" />
 
               {/* Connected Expand All / Collapse All button group */}
-              <div className="flex bg-[#090B0E] p-0.5 rounded border border-[#2D3139] items-center">
+              <div className="flex bg-(--op-bg-canvas) p-0.5 rounded border border-(--op-border) items-center">
                 <button
                   onClick={expandAllCategories}
-                  className="px-2 py-1 rounded text-xs flex items-center gap-1 text-[#94A3B8] hover:text-[#E2E8F0] hover:bg-[#1C2128] transition-all cursor-pointer"
+                  className="px-2 py-1 rounded text-xs flex items-center gap-1 text-(--op-text-secondary) hover:text-(--op-text-primary) hover:bg-(--op-bg-raised) transition-all cursor-pointer"
                   title={t('matrix.expandAllCats')}
                 >
-                  <ChevronsDown className="w-3 h-3 text-[#38BDF8]" />
+                  <ChevronsDown className="w-3 h-3 text-(--op-accent-alt)" />
                   <span>{t('matrix.expandAllCats')}</span>
                 </button>
-                <div className="h-3.5 w-[1px] bg-[#2D3139] mx-0.5" />
+                <div className="h-3.5 w-[1px] bg-(--op-border) mx-0.5" />
                 <button
                   onClick={collapseAllCategories}
-                  className="px-2 py-1 rounded text-xs flex items-center gap-1 text-[#94A3B8] hover:text-[#E2E8F0] hover:bg-[#1C2128] transition-all cursor-pointer"
+                  className="px-2 py-1 rounded text-xs flex items-center gap-1 text-(--op-text-secondary) hover:text-(--op-text-primary) hover:bg-(--op-bg-raised) transition-all cursor-pointer"
                   title={t('matrix.collapseAllCats')}
                 >
-                  <ChevronsUp className="w-3 h-3 text-[#94A3B8]" />
+                  <ChevronsUp className="w-3 h-3 text-(--op-text-secondary)" />
                   <span>{t('matrix.collapseAllCats')}</span>
                 </button>
               </div>
             </div>
           )}
 
-          <div className="h-4 w-[1px] bg-[#2D3139] mx-0.5 shrink-0" />
+          <div className="h-4 w-[1px] bg-(--op-border) mx-0.5 shrink-0" />
 
           {/* Toggle whitespace badges */}
           <button
             onClick={() => setShowWhitespaceMarks(!showWhitespaceMarks)}
             className={`px-2.5 py-1.5 rounded text-xs border transition-all flex items-center gap-1.5 cursor-pointer ${showWhitespaceMarks
-              ? 'bg-[#1E293B] text-[#38BDF8] border-[#3B82F6] font-medium shadow-xs'
-              : 'bg-[#1C2128] hover:bg-[#2D3748] text-[#94A3B8] hover:text-[#E2E8F0] border-[#2D3139]'
+              ? 'bg-(--op-bg-active) text-(--op-accent-alt) border-(--op-accent) font-medium shadow-xs'
+              : 'bg-(--op-bg-raised) hover:bg-(--op-bg-raised-hover) text-(--op-text-secondary) hover:text-(--op-text-primary) border-(--op-border)'
               }`}
             title="Toggle visible \n newline markers"
           >
@@ -401,8 +401,8 @@ export const MultiLanguageGridView: React.FC<MultiLanguageGridViewProps> = ({
           <button
             onClick={() => setExpandAllRows(!expandAllRows)}
             className={`px-2.5 py-1.5 rounded text-xs border transition-all flex items-center gap-1.5 cursor-pointer ${expandAllRows
-              ? 'bg-[#1E293B] text-[#4ADE80] border-[#4ADE80] font-medium shadow-xs'
-              : 'bg-[#1C2128] hover:bg-[#2D3748] text-[#94A3B8] hover:text-[#E2E8F0] border-[#2D3139]'
+              ? 'bg-(--op-bg-active) text-(--op-success) border-(--op-success) font-medium shadow-xs'
+              : 'bg-(--op-bg-raised) hover:bg-(--op-bg-raised-hover) text-(--op-text-secondary) hover:text-(--op-text-primary) border-(--op-border)'
               }`}
             title="Toggle expanded multiline rows"
           >
@@ -410,7 +410,7 @@ export const MultiLanguageGridView: React.FC<MultiLanguageGridViewProps> = ({
             <span>{expandAllRows ? t('matrix.compactRows') : t('matrix.expandRows')}</span>
           </button>
 
-          <div className="text-xs font-mono text-[#64748B] pl-2 border-l border-[#2D3139]">
+          <div className="text-xs font-mono text-(--op-text-muted) pl-2 border-l border-(--op-border)">
             {potEntries.length} {t('matrix.keysCount')} • {poFiles.length} {t('matrix.targetLangs')}
           </div>
         </div>
@@ -419,11 +419,11 @@ export const MultiLanguageGridView: React.FC<MultiLanguageGridViewProps> = ({
       {/* Grid Table */}
       <div className="flex-1 overflow-auto custom-scrollbar">
         <table className="w-full text-left border-collapse min-w-[800px]">
-          <thead className="sticky top-0 bg-[#16191E] border-b border-[#2D3139] text-[10px] font-bold text-[#64748B] uppercase tracking-wider z-20 shadow-sm">
+          <thead className="sticky top-0 bg-(--op-bg-surface) border-b border-(--op-border) text-[10px] font-bold text-(--op-text-muted) uppercase tracking-wider z-20 shadow-sm">
             <tr>
               {/* Header POT */}
               {!hiddenMatrixFiles?.has('pot') && (
-                <th className="matrix-col-pot p-3 w-80 border-r border-[#2D3139] bg-[#16191E] transition-colors duration-700">
+                <th className="matrix-col-pot p-3 w-80 border-r border-(--op-border) bg-(--op-bg-surface) transition-colors duration-700">
                   {t('matrix.sourceCol')} ({workspace.potFile.filename})
                 </th>
               )}
@@ -432,15 +432,15 @@ export const MultiLanguageGridView: React.FC<MultiLanguageGridViewProps> = ({
               {poFiles.filter(po => !hiddenMatrixFiles?.has(po.id)).map((po) => (
                 <th
                   key={po.id}
-                  className={`matrix-col-${po.id} p-3 min-w-[280px] border-r border-[#2D3139] bg-[#16191E] transition-colors duration-700`}
+                  className={`matrix-col-${po.id} p-3 min-w-[280px] border-r border-(--op-border) bg-(--op-bg-surface) transition-colors duration-700`}
                 >
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-1.5">
-                      <span className="text-[#3B82F6] font-mono font-bold uppercase">{po.language}</span>
-                      <span className="text-[#E2E8F0] font-medium">{po.languageName}</span>
-                      {po.entries.some((entry) => entry.msgidPlural) && <span className="px-1 py-0.5 rounded bg-[#3B82F61A] text-[#38BDF8] border border-[#3B82F633] text-[9px] font-mono">{t('editor.plural')}</span>}
+                      <span className="text-(--op-accent) font-mono font-bold uppercase">{po.language}</span>
+                      <span className="text-(--op-text-primary) font-medium">{po.languageName}</span>
+                      {po.entries.some((entry) => entry.msgidPlural) && <span className="px-1 py-0.5 rounded bg-(--op-accent)/10 text-(--op-accent-alt) border border-(--op-accent)/20 text-[9px] font-mono">{t('editor.plural')}</span>}
                     </div>
-                    <span className="text-[9px] font-mono text-[#64748B]">
+                    <span className="text-[9px] font-mono text-(--op-text-muted)">
                       {po.entries.filter((e) => e.msgstr.some((s) => s.trim() !== '')).length}/{po.entries.length}
                     </span>
                   </div>
@@ -460,28 +460,28 @@ export const MultiLanguageGridView: React.FC<MultiLanguageGridViewProps> = ({
                     <tr
                       ref={(el) => setCategoryRowRef(catName, el)}
                       onClick={() => toggleCategory(catName)}
-                      className="bg-[#12151B] border-y border-[#2D3139] hover:bg-[#1A1F26] cursor-pointer transition-colors sticky top-[38px] z-10 select-none"
+                      className="bg-[#12151B] border-y border-(--op-border) hover:bg-[#1A1F26] cursor-pointer transition-colors sticky top-[38px] z-10 select-none"
                     >
                       <td colSpan={totalColSpan} className="px-4 py-2">
                         <div className="flex items-center justify-between">
                           <div className="flex items-center gap-2">
-                            <span className="text-[#94A3B8] hover:text-white">
+                            <span className="text-(--op-text-secondary) hover:text-white">
                               {isCollapsed ? (
-                                <ChevronRight className="w-4 h-4 text-[#38BDF8]" />
+                                <ChevronRight className="w-4 h-4 text-(--op-accent-alt)" />
                               ) : (
-                                <ChevronDown className="w-4 h-4 text-[#38BDF8]" />
+                                <ChevronDown className="w-4 h-4 text-(--op-accent-alt)" />
                               )}
                             </span>
-                            <Folder className="w-3.5 h-3.5 text-[#F59E0B]" />
+                            <Folder className="w-3.5 h-3.5 text-(--op-warning)" />
                             <span className="font-semibold text-white font-sans text-xs tracking-wide">
                               {catName}
                             </span>
-                            <span className="px-2 py-0.5 rounded-full bg-[#1C2128] text-[#38BDF8] border border-[#2D3139] text-[10px] font-mono font-bold">
+                            <span className="px-2 py-0.5 rounded-full bg-(--op-bg-raised) text-(--op-accent-alt) border border-(--op-border) text-[10px] font-mono font-bold">
                               {entries.length} {t('matrix.categoryKeys')}
                             </span>
                           </div>
 
-                          <div className="flex items-center gap-3 text-[11px] font-sans text-[#64748B]">
+                          <div className="flex items-center gap-3 text-[11px] font-sans text-(--op-text-muted)">
                             <span>{isCollapsed ? 'Click to expand' : 'Click to collapse'}</span>
                           </div>
                         </div>

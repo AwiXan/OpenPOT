@@ -36,7 +36,7 @@ export const AboutModal: React.FC<AboutModalProps> = ({
           onClose();
           onOpenSettings();
         }}
-        className="px-3 py-1.5 rounded-lg bg-[#1C2128] hover:bg-[#2D3748] text-[#94A3B8] hover:text-[#E2E8F0] text-xs flex items-center gap-1.5 border border-[#2D3139] transition-colors cursor-pointer"
+        className="px-3 py-1.5 rounded-lg bg-(--op-bg-raised) hover:bg-(--op-bg-raised-hover) text-(--op-text-secondary) hover:text-(--op-text-primary) text-xs flex items-center gap-1.5 border border-(--op-border) transition-colors cursor-pointer"
       >
         <Sliders className="w-3.5 h-3.5" />
         <span>{t('settings.title')}</span>
@@ -45,7 +45,7 @@ export const AboutModal: React.FC<AboutModalProps> = ({
       <button
         type="button"
         onClick={onClose}
-        className="px-4 py-1.5 rounded-lg bg-[#3B82F6] hover:bg-[#2563EB] text-white text-xs font-semibold shadow-md shadow-blue-500/10 transition-all cursor-pointer"
+        className="px-4 py-1.5 rounded-lg bg-(--op-accent) hover:bg-(--op-accent-strong) text-white text-xs font-semibold shadow-md shadow-(--op-accent)/10 transition-all cursor-pointer"
       >
         {t('common.close')}
       </button>
@@ -55,7 +55,7 @@ export const AboutModal: React.FC<AboutModalProps> = ({
   const modalTitle = (
     <div className="flex items-center gap-2">
       <span>OpenPOT</span>
-      <span className="text-[10px] px-2 py-0.5 rounded-full bg-[#3B82F622] text-[#38BDF8] border border-[#3B82F644] font-mono font-bold leading-none">
+      <span className="text-[10px] px-2 py-0.5 rounded-full bg-(--op-accent)/13 text-(--op-accent-alt) border border-(--op-accent)/27 font-mono font-bold leading-none">
         v1.4
       </span>
     </div>
@@ -91,7 +91,7 @@ export const AboutModal: React.FC<AboutModalProps> = ({
                   {t('about.aiCraft')}
                 </span>
               </div>
-              <p className="text-[#CBD5E1] text-xs leading-relaxed italic">
+              <p className="text-(--op-text-secondary) text-xs leading-relaxed italic">
                 "{t('about.vibecodedNote')}"
               </p>
             </div>
@@ -100,85 +100,85 @@ export const AboutModal: React.FC<AboutModalProps> = ({
 
         {/* Key Capabilities */}
         <div className="space-y-2.5">
-          <h3 className="text-xs font-bold text-white tracking-wide flex items-center gap-1.5 uppercase text-[10px] text-[#64748B]">
-            <ShieldCheck className="w-3.5 h-3.5 text-[#38BDF8]" />
+          <h3 className="text-xs font-bold text-white tracking-wide flex items-center gap-1.5 uppercase text-[10px] text-(--op-text-muted)">
+            <ShieldCheck className="w-3.5 h-3.5 text-(--op-accent-alt)" />
             <span>{t('about.coreFeatures')}</span>
           </h3>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-            <div className="bg-[#090B0E] p-3 rounded-lg border border-[#2D3139] flex items-start gap-2.5">
-              <FolderTree className="w-4 h-4 text-[#38BDF8] shrink-0 mt-0.5" />
+            <div className="bg-(--op-bg-canvas) p-3 rounded-lg border border-(--op-border) flex items-start gap-2.5">
+              <FolderTree className="w-4 h-4 text-(--op-accent-alt) shrink-0 mt-0.5" />
               <div>
                 <div className="font-semibold text-white text-xs">{t('about.featureCategoryTitle')}</div>
-                <p className="text-[11px] text-[#64748B] mt-0.5">
+                <p className="text-[11px] text-(--op-text-muted) mt-0.5">
                   {t('about.featureCategoryDesc')}
                 </p>
               </div>
             </div>
 
-            <div className="bg-[#090B0E] p-3 rounded-lg border border-[#2D3139] flex items-start gap-2.5">
-              <Binary className="w-4 h-4 text-[#38BDF8] shrink-0 mt-0.5" />
+            <div className="bg-(--op-bg-canvas) p-3 rounded-lg border border-(--op-border) flex items-start gap-2.5">
+              <Binary className="w-4 h-4 text-(--op-accent-alt) shrink-0 mt-0.5" />
               <div>
                 <div className="font-semibold text-white text-xs">{t('about.featureMoTitle')}</div>
-                <p className="text-[11px] text-[#64748B] mt-0.5">
+                <p className="text-[11px] text-(--op-text-muted) mt-0.5">
                   {t('about.featureMoDesc')}
                 </p>
               </div>
             </div>
 
-            <div className="bg-[#090B0E] p-3 rounded-lg border border-[#2D3139] flex items-start gap-2.5">
-              <FileSpreadsheet className="w-4 h-4 text-[#4ADE80] shrink-0 mt-0.5" />
+            <div className="bg-(--op-bg-canvas) p-3 rounded-lg border border-(--op-border) flex items-start gap-2.5">
+              <FileSpreadsheet className="w-4 h-4 text-(--op-success) shrink-0 mt-0.5" />
               <div>
                 <div className="font-semibold text-white text-xs">{t('about.featureMatrixTitle')}</div>
-                <p className="text-[11px] text-[#64748B] mt-0.5">
+                <p className="text-[11px] text-(--op-text-muted) mt-0.5">
                   {t('about.featureMatrixDesc')}
                 </p>
               </div>
             </div>
 
-            <div className="bg-[#090B0E] p-3 rounded-lg border border-[#2D3139] flex items-start gap-2.5">
-              <FileJson className="w-4 h-4 text-[#FBBF24] shrink-0 mt-0.5" />
+            <div className="bg-(--op-bg-canvas) p-3 rounded-lg border border-(--op-border) flex items-start gap-2.5">
+              <FileJson className="w-4 h-4 text-(--op-warning) shrink-0 mt-0.5" />
               <div>
                 <div className="font-semibold text-white text-xs">{t('about.featureFormatsTitle')}</div>
-                <p className="text-[11px] text-[#64748B] mt-0.5">{t('about.featureFormatsDesc')}</p>
+                <p className="text-[11px] text-(--op-text-muted) mt-0.5">{t('about.featureFormatsDesc')}</p>
               </div>
             </div>
 
-            <div className="bg-[#090B0E] p-3 rounded-lg border border-[#2D3139] flex items-start gap-2.5">
-              <GitBranch className="w-4 h-4 text-[#F59E0B] shrink-0 mt-0.5" />
+            <div className="bg-(--op-bg-canvas) p-3 rounded-lg border border-(--op-border) flex items-start gap-2.5">
+              <GitBranch className="w-4 h-4 text-(--op-warning) shrink-0 mt-0.5" />
               <div>
                 <div className="font-semibold text-white text-xs">{t('about.featureGitTitle')}</div>
-                <p className="text-[11px] text-[#64748B] mt-0.5">
+                <p className="text-[11px] text-(--op-text-muted) mt-0.5">
                   {t('about.featureGitDesc')}
                 </p>
               </div>
             </div>
 
-            <div className="bg-[#090B0E] p-3 rounded-lg border border-[#2D3139] flex items-start gap-2.5">
+            <div className="bg-(--op-bg-canvas) p-3 rounded-lg border border-(--op-border) flex items-start gap-2.5">
               <MessageCircleWarning className="w-4 h-4 text-[#EC4899] shrink-0 mt-0.5" />
               <div>
                 <div className="font-semibold text-white text-xs">{t('about.featureTmTitle')}</div>
-                <p className="text-[11px] text-[#64748B] mt-0.5">
+                <p className="text-[11px] text-(--op-text-muted) mt-0.5">
                   {t('about.featureTmDesc')}
                 </p>
               </div>
             </div>
 
-            <div className="bg-[#090B0E] p-3 rounded-lg border border-[#2D3139] flex items-start gap-2.5">
+            <div className="bg-(--op-bg-canvas) p-3 rounded-lg border border-(--op-border) flex items-start gap-2.5">
               <FolderSync className="w-4 h-4 text-[#8B5CF6] shrink-0 mt-0.5" />
               <div>
                 <div className="font-semibold text-white text-xs">{t('about.featureFolderTitle')}</div>
-                <p className="text-[11px] text-[#64748B] mt-0.5">
+                <p className="text-[11px] text-(--op-text-muted) mt-0.5">
                   {t('about.featureFolderDesc')}
                 </p>
               </div>
             </div>
 
-            <div className="bg-[#090B0E] p-3 rounded-lg border border-[#2D3139] flex items-start gap-2.5">
+            <div className="bg-(--op-bg-canvas) p-3 rounded-lg border border-(--op-border) flex items-start gap-2.5">
               <Hash className="w-4 h-4 text-[#06B6D4] shrink-0 mt-0.5" />
               <div>
                 <div className="font-semibold text-white text-xs">{t('about.featurePluralTitle')}</div>
-                <p className="text-[11px] text-[#64748B] mt-0.5">
+                <p className="text-[11px] text-(--op-text-muted) mt-0.5">
                   {t('about.featurePluralDesc')}
                 </p>
               </div>
@@ -187,13 +187,13 @@ export const AboutModal: React.FC<AboutModalProps> = ({
         </div>
 
         {/* Technical Specs Footer */}
-        <div className="p-3 bg-[#090B0E] rounded-lg border border-[#2D3139] flex items-center justify-between text-[11px] text-[#64748B]">
+        <div className="p-3 bg-(--op-bg-canvas) rounded-lg border border-(--op-border) flex items-center justify-between text-[11px] text-(--op-text-muted)">
           <div className="flex items-center gap-1.5">
             <span>{t('about.engineName')}</span>
             <span>•</span>
-            <span className="font-mono text-[#94A3B8]">v1.4</span>
+            <span className="font-mono text-(--op-text-secondary)">v1.4</span>
           </div>
-          <div className="flex items-center gap-1 text-[#38BDF8]">
+          <div className="flex items-center gap-1 text-(--op-accent-alt)">
             <Heart className="w-3 h-3 fill-current text-rose-400" />
             <span>{t('about.footerTagline')}</span>
           </div>

@@ -162,7 +162,7 @@ export const TopHeader: React.FC<TopHeaderProps> = ({
   };
 
   return (
-    <header className="bg-[#16191E] border-b border-[#2D3139] text-[#E2E8F0] select-none">
+    <header className="bg-(--op-bg-surface) border-b border-(--op-border) text-(--op-text-primary) select-none">
       <input
         type="file"
         ref={fileInputRef}
@@ -175,12 +175,12 @@ export const TopHeader: React.FC<TopHeaderProps> = ({
       {/* Top Application Window Bar & Native Desktop Menu */}
       <div
         ref={menuBarRef}
-        className="h-9 px-3 flex items-center justify-between border-b border-[#2D3139] text-xs bg-[#090B0E] relative z-40"
+        className="h-9 px-3 flex items-center justify-between border-b border-(--op-border) text-xs bg-(--op-bg-canvas) relative z-40"
       >
         <div className="flex items-center space-x-2.5">
 
           {/* Desktop Menu Bar (File, Edit, View, Tools, Language, Help) */}
-          <nav className="flex items-center space-x-0.5 text-xs text-[#94A3B8]">
+          <nav className="flex items-center space-x-0.5 text-xs text-(--op-text-secondary)">
             {/* FILE MENU */}
             <div className="relative">
               <button
@@ -189,24 +189,24 @@ export const TopHeader: React.FC<TopHeaderProps> = ({
                 onMouseEnter={() => handleMenuHover('file')}
                 className={`px-2.5 py-1 rounded transition-colors cursor-pointer text-xs ${
                   activeMenu === 'file'
-                    ? 'bg-[#2D3748] text-white font-medium'
-                    : 'hover:bg-[#1C2128] hover:text-[#E2E8F0]'
+                    ? 'bg-(--op-bg-raised-hover) text-white font-medium'
+                    : 'hover:bg-(--op-bg-raised) hover:text-(--op-text-primary)'
                 }`}
               >
                 {t('menu.file')}
               </button>
 
               {activeMenu === 'file' && (
-                <div className="absolute left-0 top-full mt-1 w-64 bg-[#16191E] border border-[#2D3139] rounded-lg shadow-2xl py-1 z-50 text-xs font-sans">
+                <div className="absolute left-0 top-full mt-1 w-64 bg-(--op-bg-surface) border border-(--op-border) rounded-lg shadow-2xl py-1 z-50 text-xs font-sans">
                   <button
                     onClick={() => {
                       onOpenLocalFolder();
                       setActiveMenu(null);
                     }}
-                    className="w-full px-3 py-1.5 flex items-center justify-between text-left text-[#E2E8F0] hover:bg-[#1E293B] hover:text-[#38BDF8] transition-colors cursor-pointer"
+                    className="w-full px-3 py-1.5 flex items-center justify-between text-left text-(--op-text-primary) hover:bg-(--op-bg-active) hover:text-(--op-accent-alt) transition-colors cursor-pointer"
                   >
                     <div className="flex items-center gap-2">
-                      <FolderSync className="w-4 h-4 text-[#38BDF8]" />
+                      <FolderSync className="w-4 h-4 text-(--op-accent-alt)" />
                       <span>{t('menu.openFolder')}</span>
                     </div>
                   </button>
@@ -216,18 +216,18 @@ export const TopHeader: React.FC<TopHeaderProps> = ({
                       fileInputRef.current?.click();
                       setActiveMenu(null);
                     }}
-                    className="w-full px-3 py-1.5 flex items-center justify-between text-left text-[#E2E8F0] hover:bg-[#1E293B] hover:text-[#38BDF8] transition-colors cursor-pointer"
+                    className="w-full px-3 py-1.5 flex items-center justify-between text-left text-(--op-text-primary) hover:bg-(--op-bg-active) hover:text-(--op-accent-alt) transition-colors cursor-pointer"
                   >
                     <div className="flex items-center gap-2">
-                      <FolderOpen className="w-4 h-4 text-[#3B82F6]" />
+                      <FolderOpen className="w-4 h-4 text-(--op-accent)" />
                       <span>{t('menu.openFiles')}</span>
                     </div>
-                    <span className="text-[10px] text-[#64748B] font-mono">.po / .pot</span>
+                    <span className="text-[10px] text-(--op-text-muted) font-mono">.po / .pot</span>
                   </button>
                   {recentFolders && recentFolders.length > 0 && (
                     <>
-                      <div className="border-t border-[#2D3139] my-1" />
-                      <div className="px-3 py-1 text-[10px] font-bold text-[#64748B] uppercase tracking-wider">
+                      <div className="border-t border-(--op-border) my-1" />
+                      <div className="px-3 py-1 text-[10px] font-bold text-(--op-text-muted) uppercase tracking-wider">
                         {t('menu.recents')}
                       </div>
                       {recentFolders.slice(0, 4).map((path) => {
@@ -239,11 +239,11 @@ export const TopHeader: React.FC<TopHeaderProps> = ({
                               onOpenRecent(path);
                               setActiveMenu(null);
                             }}
-                            className="w-full px-3 py-1.5 flex items-center justify-between text-left text-[#94A3B8] hover:bg-[#1E293B] hover:text-[#38BDF8] transition-colors cursor-pointer group"
+                            className="w-full px-3 py-1.5 flex items-center justify-between text-left text-(--op-text-secondary) hover:bg-(--op-bg-active) hover:text-(--op-accent-alt) transition-colors cursor-pointer group"
                           >
                             <div className="flex items-center gap-2 truncate">
-                              <Clock className="w-3.5 h-3.5 text-[#64748B] group-hover:text-[#38BDF8] shrink-0" />
-                              <span className="truncate text-[11px] text-[#E2E8F0] group-hover:text-[#38BDF8]">
+                              <Clock className="w-3.5 h-3.5 text-(--op-text-muted) group-hover:text-(--op-accent-alt) shrink-0" />
+                              <span className="truncate text-[11px] text-(--op-text-primary) group-hover:text-(--op-accent-alt)">
                                 {folderName}
                               </span>
                             </div>
@@ -256,20 +256,20 @@ export const TopHeader: React.FC<TopHeaderProps> = ({
                     </>
                   )}
 
-                  <div className="border-t border-[#2D3139] my-1" />
+                  <div className="border-t border-(--op-border) my-1" />
 
                   <button
                     onClick={() => {
                       onOpenNewKeyModal();
                       setActiveMenu(null);
                     }}
-                    className="w-full px-3 py-1.5 flex items-center justify-between text-left text-[#E2E8F0] hover:bg-[#1E293B] hover:text-[#38BDF8] transition-colors cursor-pointer"
+                    className="w-full px-3 py-1.5 flex items-center justify-between text-left text-(--op-text-primary) hover:bg-(--op-bg-active) hover:text-(--op-accent-alt) transition-colors cursor-pointer"
                   >
                     <div className="flex items-center gap-2">
-                      <Plus className="w-4 h-4 text-[#4ADE80]" />
+                      <Plus className="w-4 h-4 text-(--op-success)" />
                       <span>{t('menu.newKey')}</span>
                     </div>
-                    <span className="text-[10px] text-[#64748B] font-mono">Ctrl+N</span>
+                    <span className="text-[10px] text-(--op-text-muted) font-mono">Ctrl+N</span>
                   </button>
 
                   <button
@@ -277,15 +277,15 @@ export const TopHeader: React.FC<TopHeaderProps> = ({
                       onOpenAddLanguageModal();
                       setActiveMenu(null);
                     }}
-                    className="w-full px-3 py-1.5 flex items-center justify-between text-left text-[#E2E8F0] hover:bg-[#1E293B] hover:text-[#38BDF8] transition-colors cursor-pointer"
+                    className="w-full px-3 py-1.5 flex items-center justify-between text-left text-(--op-text-primary) hover:bg-(--op-bg-active) hover:text-(--op-accent-alt) transition-colors cursor-pointer"
                   >
                     <div className="flex items-center gap-2">
-                      <Layers className="w-4 h-4 text-[#4ADE80]" />
+                      <Layers className="w-4 h-4 text-(--op-success)" />
                       <span>{t('menu.addLanguage')}</span>
                     </div>
                   </button>
 
-                  <div className="border-t border-[#2D3139] my-1" />
+                  <div className="border-t border-(--op-border) my-1" />
 
                   <button
                     onClick={() => {
@@ -296,13 +296,13 @@ export const TopHeader: React.FC<TopHeaderProps> = ({
                       }
                       setActiveMenu(null);
                     }}
-                    className="w-full px-3 py-1.5 flex items-center justify-between text-left text-[#E2E8F0] hover:bg-[#1E293B] hover:text-[#38BDF8] transition-colors cursor-pointer"
+                    className="w-full px-3 py-1.5 flex items-center justify-between text-left text-(--op-text-primary) hover:bg-(--op-bg-active) hover:text-(--op-accent-alt) transition-colors cursor-pointer"
                   >
                     <div className="flex items-center gap-2">
-                      <RefreshCw className="w-4 h-4 text-[#38BDF8]" />
+                      <RefreshCw className="w-4 h-4 text-(--op-accent-alt)" />
                       <span>{t('menu.saveSync')}</span>
                     </div>
-                    <span className="text-[10px] text-[#64748B] font-mono">Ctrl+S</span>
+                    <span className="text-[10px] text-(--op-text-muted) font-mono">Ctrl+S</span>
                   </button>
 
                   <button
@@ -310,26 +310,26 @@ export const TopHeader: React.FC<TopHeaderProps> = ({
                       onOpenMoCompilerModal();
                       setActiveMenu(null);
                     }}
-                    className="w-full px-3 py-1.5 flex items-center justify-between text-left text-[#E2E8F0] hover:bg-[#1E293B] hover:text-[#38BDF8] transition-colors cursor-pointer"
+                    className="w-full px-3 py-1.5 flex items-center justify-between text-left text-(--op-text-primary) hover:bg-(--op-bg-active) hover:text-(--op-accent-alt) transition-colors cursor-pointer"
                   >
                     <div className="flex items-center gap-2">
-                      <Binary className="w-4 h-4 text-[#38BDF8]" />
+                      <Binary className="w-4 h-4 text-(--op-accent-alt)" />
                       <span>{t('menu.compileMo')}</span>
                     </div>
-                    <span className="text-[10px] text-[#64748B] font-mono">.mo</span>
+                    <span className="text-[10px] text-(--op-text-muted) font-mono">.mo</span>
                   </button>
 
-                  <div className="border-t border-[#2D3139] my-1" />
+                  <div className="border-t border-(--op-border) my-1" />
                   
                   <button
                     onClick={() => {
                       onOpenImportModal();
                       setActiveMenu(null);
                     }}
-                    className="w-full px-3 py-1.5 flex items-center justify-between text-left text-[#E2E8F0] hover:bg-[#1E293B] hover:text-[#38BDF8] transition-colors cursor-pointer"
+                    className="w-full px-3 py-1.5 flex items-center justify-between text-left text-(--op-text-primary) hover:bg-(--op-bg-active) hover:text-(--op-accent-alt) transition-colors cursor-pointer"
                   >
                     <div className="flex items-center gap-2">
-                      <Upload className="w-4 h-4 text-[#10B981]" />
+                      <Upload className="w-4 h-4 text-(--op-success-strong)" />
                       <span>{t('header.import')}</span>
                     </div>
                   </button>
@@ -339,18 +339,18 @@ export const TopHeader: React.FC<TopHeaderProps> = ({
                       onOpenExportModal();
                       setActiveMenu(null);
                     }}
-                    className="w-full px-3 py-1.5 flex items-center justify-between text-left text-[#E2E8F0] hover:bg-[#1E293B] hover:text-[#38BDF8] transition-colors cursor-pointer"
+                    className="w-full px-3 py-1.5 flex items-center justify-between text-left text-(--op-text-primary) hover:bg-(--op-bg-active) hover:text-(--op-accent-alt) transition-colors cursor-pointer"
                   >
                     <div className="flex items-center gap-2">
-                      <Download className="w-4 h-4 text-[#3B82F6]" />
+                      <Download className="w-4 h-4 text-(--op-accent)" />
                       <span>{t('header.export')}</span>
                     </div>
-                    <span className="text-[10px] text-[#64748B] font-mono">{t('menu.exportFormats')}</span>
+                    <span className="text-[10px] text-(--op-text-muted) font-mono">{t('menu.exportFormats')}</span>
                   </button>
 
                   {localDirState.isConnected && (
                     <>
-                      <div className="border-t border-[#2D3139] my-1" />
+                      <div className="border-t border-(--op-border) my-1" />
                       <button
                         onClick={() => {
                           onDisconnectLocalFolder();
@@ -380,15 +380,15 @@ export const TopHeader: React.FC<TopHeaderProps> = ({
                 onMouseEnter={() => handleMenuHover('edit')}
                 className={`px-2.5 py-1 rounded transition-colors cursor-pointer text-xs ${
                   activeMenu === 'edit'
-                    ? 'bg-[#2D3748] text-white font-medium'
-                    : 'hover:bg-[#1C2128] hover:text-[#E2E8F0]'
+                    ? 'bg-(--op-bg-raised-hover) text-white font-medium'
+                    : 'hover:bg-(--op-bg-raised) hover:text-(--op-text-primary)'
                 }`}
               >
                 {t('menu.edit')}
               </button>
 
               {activeMenu === 'edit' && (
-                <div className="absolute left-0 top-full mt-1 w-56 bg-[#16191E] border border-[#2D3139] rounded-lg shadow-2xl py-1 z-50 text-xs font-sans">
+                <div className="absolute left-0 top-full mt-1 w-56 bg-(--op-bg-surface) border border-(--op-border) rounded-lg shadow-2xl py-1 z-50 text-xs font-sans">
                   <button
                     onClick={() => {
                       if (canUndo) onUndo();
@@ -397,15 +397,15 @@ export const TopHeader: React.FC<TopHeaderProps> = ({
                     disabled={!canUndo}
                     className={`w-full px-3 py-1.5 flex items-center justify-between text-left transition-colors cursor-pointer ${
                       canUndo
-                        ? 'text-[#E2E8F0] hover:bg-[#1E293B] hover:text-[#38BDF8]'
-                        : 'text-[#64748B] opacity-40 cursor-not-allowed'
+                        ? 'text-(--op-text-primary) hover:bg-(--op-bg-active) hover:text-(--op-accent-alt)'
+                        : 'text-(--op-text-muted) opacity-40 cursor-not-allowed'
                     }`}
                   >
                     <div className="flex items-center gap-2">
                       <Undo2 className="w-4 h-4" />
                       <span>{t('header.undo')}</span>
                     </div>
-                    <span className="text-[10px] text-[#64748B] font-mono">Ctrl+Z</span>
+                    <span className="text-[10px] text-(--op-text-muted) font-mono">Ctrl+Z</span>
                   </button>
 
                   <button
@@ -416,28 +416,28 @@ export const TopHeader: React.FC<TopHeaderProps> = ({
                     disabled={!canRedo}
                     className={`w-full px-3 py-1.5 flex items-center justify-between text-left transition-colors cursor-pointer ${
                       canRedo
-                        ? 'text-[#E2E8F0] hover:bg-[#1E293B] hover:text-[#38BDF8]'
-                        : 'text-[#64748B] opacity-40 cursor-not-allowed'
+                        ? 'text-(--op-text-primary) hover:bg-(--op-bg-active) hover:text-(--op-accent-alt)'
+                        : 'text-(--op-text-muted) opacity-40 cursor-not-allowed'
                     }`}
                   >
                     <div className="flex items-center gap-2">
                       <Redo2 className="w-4 h-4" />
                       <span>{t('header.redo')}</span>
                     </div>
-                    <span className="text-[10px] text-[#64748B] font-mono">Ctrl+Y</span>
+                    <span className="text-[10px] text-(--op-text-muted) font-mono">Ctrl+Y</span>
                   </button>
 
-                  <div className="border-t border-[#2D3139] my-1" />
+                  <div className="border-t border-(--op-border) my-1" />
 
                   <button
                     onClick={() => {
                       onOpenBatchModal();
                       setActiveMenu(null);
                     }}
-                    className="w-full px-3 py-1.5 flex items-center justify-between text-left text-[#E2E8F0] hover:bg-[#1E293B] hover:text-[#38BDF8] transition-colors cursor-pointer"
+                    className="w-full px-3 py-1.5 flex items-center justify-between text-left text-(--op-text-primary) hover:bg-(--op-bg-active) hover:text-(--op-accent-alt) transition-colors cursor-pointer"
                   >
                     <div className="flex items-center gap-2">
-                      <FileStack className="w-4 h-4 text-[#F59E0B]" />
+                      <FileStack className="w-4 h-4 text-(--op-warning)" />
                       <span>{t('menu.batchTm')}</span>
                     </div>
                   </button>
@@ -453,27 +453,27 @@ export const TopHeader: React.FC<TopHeaderProps> = ({
                 onMouseEnter={() => handleMenuHover('view')}
                 className={`px-2.5 py-1 rounded transition-colors cursor-pointer text-xs ${
                   activeMenu === 'view'
-                    ? 'bg-[#2D3748] text-white font-medium'
-                    : 'hover:bg-[#1C2128] hover:text-[#E2E8F0]'
+                    ? 'bg-(--op-bg-raised-hover) text-white font-medium'
+                    : 'hover:bg-(--op-bg-raised) hover:text-(--op-text-primary)'
                 }`}
               >
                 {t('menu.view')}
               </button>
 
               {activeMenu === 'view' && (
-                <div className="absolute left-0 top-full mt-1 w-64 bg-[#16191E] border border-[#2D3139] rounded-lg shadow-2xl py-1 z-50 text-xs font-sans">
+                <div className="absolute left-0 top-full mt-1 w-64 bg-(--op-bg-surface) border border-(--op-border) rounded-lg shadow-2xl py-1 z-50 text-xs font-sans">
                   <button
                     onClick={() => {
                       setViewMode('editor');
                       setActiveMenu(null);
                     }}
-                    className="w-full px-3 py-1.5 flex items-center justify-between text-left text-[#E2E8F0] hover:bg-[#1E293B] hover:text-[#38BDF8] transition-colors cursor-pointer"
+                    className="w-full px-3 py-1.5 flex items-center justify-between text-left text-(--op-text-primary) hover:bg-(--op-bg-active) hover:text-(--op-accent-alt) transition-colors cursor-pointer"
                   >
                     <div className="flex items-center gap-2">
-                      <FileCode className="w-4 h-4 text-[#38BDF8]" />
+                      <FileCode className="w-4 h-4 text-(--op-accent-alt)" />
                       <span>{t('menu.viewEditor')}</span>
                     </div>
-                    {viewMode === 'editor' && <Check className="w-3.5 h-3.5 text-[#38BDF8]" />}
+                    {viewMode === 'editor' && <Check className="w-3.5 h-3.5 text-(--op-accent-alt)" />}
                   </button>
 
                   <button
@@ -481,26 +481,26 @@ export const TopHeader: React.FC<TopHeaderProps> = ({
                       setViewMode('matrix');
                       setActiveMenu(null);
                     }}
-                    className="w-full px-3 py-1.5 flex items-center justify-between text-left text-[#E2E8F0] hover:bg-[#1E293B] hover:text-[#38BDF8] transition-colors cursor-pointer"
+                    className="w-full px-3 py-1.5 flex items-center justify-between text-left text-(--op-text-primary) hover:bg-(--op-bg-active) hover:text-(--op-accent-alt) transition-colors cursor-pointer"
                   >
                     <div className="flex items-center gap-2">
-                      <FileSpreadsheet className="w-4 h-4 text-[#38BDF8]" />
+                      <FileSpreadsheet className="w-4 h-4 text-(--op-accent-alt)" />
                       <span>{t('menu.viewMatrix')}</span>
                     </div>
-                    {viewMode === 'matrix' && <Check className="w-3.5 h-3.5 text-[#38BDF8]" />}
+                    {viewMode === 'matrix' && <Check className="w-3.5 h-3.5 text-(--op-accent-alt)" />}
                   </button>
 
-                  <div className="border-t border-[#2D3139] my-1" />
+                  <div className="border-t border-(--op-border) my-1" />
 
                   <button
                     onClick={() => {
                       onOpenRawPoModal();
                       setActiveMenu(null);
                     }}
-                    className="w-full px-3 py-1.5 flex items-center justify-between text-left text-[#E2E8F0] hover:bg-[#1E293B] hover:text-[#38BDF8] transition-colors cursor-pointer"
+                    className="w-full px-3 py-1.5 flex items-center justify-between text-left text-(--op-text-primary) hover:bg-(--op-bg-active) hover:text-(--op-accent-alt) transition-colors cursor-pointer"
                   >
                     <div className="flex items-center gap-2">
-                      <Code2 className="w-4 h-4 text-[#94A3B8]" />
+                      <Code2 className="w-4 h-4 text-(--op-text-secondary)" />
                       <span>{t('menu.viewRaw')}</span>
                     </div>
                   </button>
@@ -516,24 +516,24 @@ export const TopHeader: React.FC<TopHeaderProps> = ({
                 onMouseEnter={() => handleMenuHover('tools')}
                 className={`px-2.5 py-1 rounded transition-colors cursor-pointer text-xs ${
                   activeMenu === 'tools'
-                    ? 'bg-[#2D3748] text-white font-medium'
-                    : 'hover:bg-[#1C2128] hover:text-[#E2E8F0]'
+                    ? 'bg-(--op-bg-raised-hover) text-white font-medium'
+                    : 'hover:bg-(--op-bg-raised) hover:text-(--op-text-primary)'
                 }`}
               >
                 {t('menu.tools')}
               </button>
 
               {activeMenu === 'tools' && (
-                <div className="absolute left-0 top-full mt-1 w-64 bg-[#16191E] border border-[#2D3139] rounded-lg shadow-2xl py-1 z-50 text-xs font-sans">
+                <div className="absolute left-0 top-full mt-1 w-64 bg-(--op-bg-surface) border border-(--op-border) rounded-lg shadow-2xl py-1 z-50 text-xs font-sans">
                   <button
                     onClick={() => {
                       onOpenMoCompilerModal();
                       setActiveMenu(null);
                     }}
-                    className="w-full px-3 py-1.5 flex items-center justify-between text-left text-[#E2E8F0] hover:bg-[#1E293B] hover:text-[#38BDF8] transition-colors cursor-pointer"
+                    className="w-full px-3 py-1.5 flex items-center justify-between text-left text-(--op-text-primary) hover:bg-(--op-bg-active) hover:text-(--op-accent-alt) transition-colors cursor-pointer"
                   >
                     <div className="flex items-center gap-2">
-                      <Binary className="w-4 h-4 text-[#38BDF8]" />
+                      <Binary className="w-4 h-4 text-(--op-accent-alt)" />
                       <span>{t('header.compileMo')}</span>
                     </div>
                   </button>
@@ -543,30 +543,30 @@ export const TopHeader: React.FC<TopHeaderProps> = ({
                       onOpenGitModal();
                       setActiveMenu(null);
                     }}
-                    className="w-full px-3 py-1.5 flex items-center justify-between text-left text-[#E2E8F0] hover:bg-[#1E293B] hover:text-[#38BDF8] transition-colors cursor-pointer"
+                    className="w-full px-3 py-1.5 flex items-center justify-between text-left text-(--op-text-primary) hover:bg-(--op-bg-active) hover:text-(--op-accent-alt) transition-colors cursor-pointer"
                   >
                     <div className="flex items-center gap-2">
-                      <GitBranch className="w-4 h-4 text-[#38BDF8]" />
+                      <GitBranch className="w-4 h-4 text-(--op-accent-alt)" />
                       <span>{t('header.git')}</span>
                     </div>
                     {gitModifiedCount > 0 && (
-                      <span className="px-1.5 py-0.2 rounded bg-[#3B82F6] text-white text-[9px] font-mono font-bold">
+                      <span className="px-1.5 py-0.2 rounded bg-(--op-accent) text-white text-[9px] font-mono font-bold">
                         {gitModifiedCount}
                       </span>
                     )}
                   </button>
 
-                  <div className="border-t border-[#2D3139] my-1" />
+                  <div className="border-t border-(--op-border) my-1" />
 
                   <button
                     onClick={() => {
                       onOpenSettingsModal();
                       setActiveMenu(null);
                     }}
-                    className="w-full px-3 py-1.5 flex items-center justify-between text-left text-[#E2E8F0] hover:bg-[#1E293B] hover:text-[#38BDF8] transition-colors cursor-pointer"
+                    className="w-full px-3 py-1.5 flex items-center justify-between text-left text-(--op-text-primary) hover:bg-(--op-bg-active) hover:text-(--op-accent-alt) transition-colors cursor-pointer"
                   >
                     <div className="flex items-center gap-2">
-                      <Settings className="w-4 h-4 text-[#94A3B8]" />
+                      <Settings className="w-4 h-4 text-(--op-text-secondary)" />
                       <span>{t('menu.preferences')}</span>
                     </div>
                   </button>
@@ -582,19 +582,19 @@ export const TopHeader: React.FC<TopHeaderProps> = ({
                 onMouseEnter={() => handleMenuHover('language')}
                 className={`px-2.5 py-1 rounded transition-colors cursor-pointer text-xs flex items-center gap-1 ${
                   activeMenu === 'language'
-                    ? 'bg-[#2D3748] text-white font-medium'
-                    : 'hover:bg-[#1C2128] hover:text-[#E2E8F0]'
+                    ? 'bg-(--op-bg-raised-hover) text-white font-medium'
+                    : 'hover:bg-(--op-bg-raised) hover:text-(--op-text-primary)'
                 }`}
               >
                 <span>{t('menu.language')}</span>
-                <span className="text-[10px] text-[#38BDF8] uppercase font-mono font-bold ml-0.5">
+                <span className="text-[10px] text-(--op-accent-alt) uppercase font-mono font-bold ml-0.5">
                   ({activeLangInfo.code})
                 </span>
               </button>
 
               {activeMenu === 'language' && (
-                <div className="absolute left-0 top-full mt-1 w-52 bg-[#16191E] border border-[#2D3139] rounded-lg shadow-2xl py-1 z-50 text-xs font-sans">
-                  <div className="px-3 py-1 text-[10px] font-bold text-[#64748B] uppercase tracking-wider border-b border-[#2D3139]">
+                <div className="absolute left-0 top-full mt-1 w-52 bg-(--op-bg-surface) border border-(--op-border) rounded-lg shadow-2xl py-1 z-50 text-xs font-sans">
+                  <div className="px-3 py-1 text-[10px] font-bold text-(--op-text-muted) uppercase tracking-wider border-b border-(--op-border)">
                     {t('settings.languageTab')}
                   </div>
                   {SUPPORTED_UI_LANGUAGES.map((lang) => {
@@ -608,8 +608,8 @@ export const TopHeader: React.FC<TopHeaderProps> = ({
                         }}
                         className={`w-full px-3 py-1.5 flex items-center justify-between text-left transition-colors cursor-pointer ${
                           isCurrent
-                            ? 'bg-[#1E293B] text-[#38BDF8] font-semibold'
-                            : 'text-[#94A3B8] hover:bg-[#1C2128] hover:text-[#E2E8F0]'
+                            ? 'bg-(--op-bg-active) text-(--op-accent-alt) font-semibold'
+                            : 'text-(--op-text-secondary) hover:bg-(--op-bg-raised) hover:text-(--op-text-primary)'
                         }`}
                       >
                         <div className="flex items-center gap-2">
@@ -617,9 +617,9 @@ export const TopHeader: React.FC<TopHeaderProps> = ({
                           <span>{lang.nativeName}</span>
                         </div>
                         {isCurrent ? (
-                          <Check className="w-3.5 h-3.5 text-[#38BDF8]" />
+                          <Check className="w-3.5 h-3.5 text-(--op-accent-alt)" />
                         ) : (
-                          <span className="font-mono text-[10px] text-[#64748B] uppercase">
+                          <span className="font-mono text-[10px] text-(--op-text-muted) uppercase">
                             {lang.code}
                           </span>
                         )}
@@ -638,24 +638,24 @@ export const TopHeader: React.FC<TopHeaderProps> = ({
                 onMouseEnter={() => handleMenuHover('help')}
                 className={`px-2.5 py-1 rounded transition-colors cursor-pointer text-xs ${
                   activeMenu === 'help'
-                    ? 'bg-[#2D3748] text-white font-medium'
-                    : 'hover:bg-[#1C2128] hover:text-[#E2E8F0]'
+                    ? 'bg-(--op-bg-raised-hover) text-white font-medium'
+                    : 'hover:bg-(--op-bg-raised) hover:text-(--op-text-primary)'
                 }`}
               >
                 {t('menu.help')}
               </button>
 
               {activeMenu === 'help' && (
-                <div className="absolute left-0 top-full mt-1 w-56 bg-[#16191E] border border-[#2D3139] rounded-lg shadow-2xl py-1 z-50 text-xs font-sans">
+                <div className="absolute left-0 top-full mt-1 w-56 bg-(--op-bg-surface) border border-(--op-border) rounded-lg shadow-2xl py-1 z-50 text-xs font-sans">
                   <button
                     onClick={() => {
                       onOpenAboutModal();
                       setActiveMenu(null);
                     }}
-                    className="w-full px-3 py-1.5 flex items-center justify-between text-left text-[#E2E8F0] hover:bg-[#1E293B] hover:text-[#38BDF8] transition-colors cursor-pointer"
+                    className="w-full px-3 py-1.5 flex items-center justify-between text-left text-(--op-text-primary) hover:bg-(--op-bg-active) hover:text-(--op-accent-alt) transition-colors cursor-pointer"
                   >
                     <div className="flex items-center gap-2">
-                      <HelpCircle className="w-4 h-4 text-[#38BDF8]" />
+                      <HelpCircle className="w-4 h-4 text-(--op-accent-alt)" />
                       <span>{t('menu.about')}</span>
                     </div>
                   </button>
@@ -669,12 +669,12 @@ export const TopHeader: React.FC<TopHeaderProps> = ({
         <div className="flex items-center gap-2.5 shrink-0">
           {/* Local Folder Connected Status Badge */}
           {localDirState.isConnected ? (
-            <div className="flex items-center gap-1.5 bg-[#4ADE801A] border border-[#4ADE8044] px-2 py-0.5 rounded text-[11px] font-mono text-[#4ADE80]">
+            <div className="flex items-center gap-1.5 bg-(--op-success)/10 border border-(--op-success)/27 px-2 py-0.5 rounded text-[11px] font-mono text-(--op-success)">
               <FolderSync className="w-3 h-3 animate-pulse" />
               <span className="font-semibold max-w-[120px] truncate" title={localDirState.dirName}>
                 {localDirState.dirName}
               </span>
-              <span className="text-[9px] text-[#94A3B8]">
+              <span className="text-[9px] text-(--op-text-secondary)">
                 {localDirState.autoCompileMo ? '(Auto .MO)' : '(Disk Sync)'}
               </span>
               <button
@@ -695,10 +695,10 @@ export const TopHeader: React.FC<TopHeaderProps> = ({
           ) : (
             <button
               onClick={onOpenLocalFolder}
-              className="flex items-center gap-1.5 text-[11px] font-mono bg-[#1C2128] hover:bg-[#2D3748] text-[#94A3B8] hover:text-[#E2E8F0] border border-[#2D3139] px-2 py-0.5 rounded transition-colors cursor-pointer"
+              className="flex items-center gap-1.5 text-[11px] font-mono bg-(--op-bg-raised) hover:bg-(--op-bg-raised-hover) text-(--op-text-secondary) hover:text-(--op-text-primary) border border-(--op-border) px-2 py-0.5 rounded transition-colors cursor-pointer"
               title="Open a local directory containing .pot and .po files for direct disk editing and automatic .mo generation"
             >
-              <FolderSync className="w-3 h-3 text-[#38BDF8]" />
+              <FolderSync className="w-3 h-3 text-(--op-accent-alt)" />
               <span>{t('menu.openFolder')}</span>
             </button>
           )}
@@ -707,13 +707,13 @@ export const TopHeader: React.FC<TopHeaderProps> = ({
           <button
             id="btn-git-header"
             onClick={onOpenGitModal}
-            className="flex items-center gap-1.5 text-[11px] font-mono bg-[#1C2128] hover:bg-[#2D3748] border border-[#2D3139] px-2 py-0.5 rounded transition-colors cursor-pointer text-[#38BDF8]"
+            className="flex items-center gap-1.5 text-[11px] font-mono bg-(--op-bg-raised) hover:bg-(--op-bg-raised-hover) border border-(--op-border) px-2 py-0.5 rounded transition-colors cursor-pointer text-(--op-accent-alt)"
             title="Open Git Source Control & Commit History"
           >
-            <GitBranch className="w-3 h-3 text-[#38BDF8]" />
+            <GitBranch className="w-3 h-3 text-(--op-accent-alt)" />
             <span>{currentWorkspace.git?.branch || 'main'}</span>
             {gitModifiedCount > 0 && (
-              <span className="px-1 py-0.2 rounded bg-[#3B82F6] text-white text-[9px] font-bold">
+              <span className="px-1 py-0.2 rounded bg-(--op-accent) text-white text-[9px] font-bold">
                 {gitModifiedCount}
               </span>
             )}
@@ -722,19 +722,19 @@ export const TopHeader: React.FC<TopHeaderProps> = ({
       </div>
 
       {/* Main Tool Bar (Pinned Ends + Scrollable Middle Track) */}
-      <div className="relative flex items-center h-11 px-3 bg-[#16191E] border-t border-[#23272F]">
+      <div className="relative flex items-center h-11 px-3 bg-(--op-bg-surface) border-t border-[#23272F]">
         {/* Left Pinned Items: History & New Key */}
         <div className="flex items-center gap-1.5 shrink-0 pr-1">
           {/* Undo / Redo */}
-          <div className="flex items-center bg-[#090B0E] p-0.5 rounded border border-[#2D3139]">
+          <div className="flex items-center bg-(--op-bg-canvas) p-0.5 rounded border border-(--op-border)">
             <button
               id="btn-undo"
               onClick={onUndo}
               disabled={!canUndo}
               className={`p-1.5 rounded transition-all cursor-pointer ${
                 canUndo
-                  ? 'text-[#E2E8F0] hover:bg-[#1C2128] hover:text-[#38BDF8]'
-                  : 'text-[#64748B] opacity-40 cursor-not-allowed'
+                  ? 'text-(--op-text-primary) hover:bg-(--op-bg-raised) hover:text-(--op-accent-alt)'
+                  : 'text-(--op-text-muted) opacity-40 cursor-not-allowed'
               }`}
               title={t('header.undo')}
             >
@@ -746,8 +746,8 @@ export const TopHeader: React.FC<TopHeaderProps> = ({
               disabled={!canRedo}
               className={`p-1.5 rounded transition-all cursor-pointer ${
                 canRedo
-                  ? 'text-[#E2E8F0] hover:bg-[#1C2128] hover:text-[#38BDF8]'
-                  : 'text-[#64748B] opacity-40 cursor-not-allowed'
+                  ? 'text-(--op-text-primary) hover:bg-(--op-bg-raised) hover:text-(--op-accent-alt)'
+                  : 'text-(--op-text-muted) opacity-40 cursor-not-allowed'
               }`}
               title={t('header.redo')}
             >
@@ -759,7 +759,7 @@ export const TopHeader: React.FC<TopHeaderProps> = ({
           <button
             id="btn-add-key"
             onClick={onOpenNewKeyModal}
-            className="bg-[#3B82F6] hover:bg-[#2563EB] text-white px-2.5 sm:px-3 py-1.5 rounded text-xs font-semibold flex items-center gap-1.5 transition-all shadow-md shadow-blue-500/10 cursor-pointer"
+            className="bg-(--op-accent) hover:bg-(--op-accent-strong) text-white px-2.5 sm:px-3 py-1.5 rounded text-xs font-semibold flex items-center gap-1.5 transition-all shadow-md shadow-(--op-accent)/10 cursor-pointer"
             title="Add new msgid key to .pot and sync all .po files"
           >
             <Plus className="w-3.5 h-3.5" />
@@ -767,13 +767,13 @@ export const TopHeader: React.FC<TopHeaderProps> = ({
           </button>
         </div>
 
-        <div className="h-5 w-[1px] bg-[#2D3139] mx-1 shrink-0" />
+        <div className="h-5 w-[1px] bg-(--op-border) mx-1 shrink-0" />
 
         {/* Middle Scrollable Section with End Gradients */}
         <div className="relative flex-1 flex items-center min-w-0 overflow-hidden h-full">
           {/* Left fading edge gradient */}
           <div
-            className={`absolute left-0 top-0 bottom-0 w-6 bg-gradient-to-r from-[#16191E] to-transparent pointer-events-none z-10 transition-opacity duration-200 ${
+            className={`absolute left-0 top-0 bottom-0 w-6 bg-gradient-to-r from-(--op-bg-surface) to-transparent pointer-events-none z-10 transition-opacity duration-200 ${
               canScrollLeft ? 'opacity-100' : 'opacity-0'
             }`}
           />
@@ -788,75 +788,75 @@ export const TopHeader: React.FC<TopHeaderProps> = ({
               <button
                 id="btn-open-folder"
                 onClick={onOpenLocalFolder}
-                className="px-2.5 py-1.5 rounded bg-[#1C2128] hover:bg-[#2D3748] text-[#94A3B8] hover:text-[#E2E8F0] text-xs flex items-center gap-1.5 border border-[#2D3139] transition-colors cursor-pointer"
+                className="px-2.5 py-1.5 rounded bg-(--op-bg-raised) hover:bg-(--op-bg-raised-hover) text-(--op-text-secondary) hover:text-(--op-text-primary) text-xs flex items-center gap-1.5 border border-(--op-border) transition-colors cursor-pointer"
                 title="Open local directory with .pot/.po files for live disk sync and automatic .mo compilation"
               >
-                <FolderSync className="w-3.5 h-3.5 text-[#38BDF8]" />
+                <FolderSync className="w-3.5 h-3.5 text-(--op-accent-alt)" />
                 <span>{t('header.openFolder')}</span>
               </button>
 
               <button
                 id="btn-import-file"
                 onClick={() => fileInputRef.current?.click()}
-                className="px-2.5 py-1.5 rounded bg-[#1C2128] hover:bg-[#2D3748] text-[#94A3B8] hover:text-[#E2E8F0] text-xs flex items-center gap-1.5 border border-[#2D3139] transition-colors cursor-pointer"
+                className="px-2.5 py-1.5 rounded bg-(--op-bg-raised) hover:bg-(--op-bg-raised-hover) text-(--op-text-secondary) hover:text-(--op-text-primary) text-xs flex items-center gap-1.5 border border-(--op-border) transition-colors cursor-pointer"
                 title="Import single or multiple .po / .pot files"
               >
-                <FolderOpen className="w-3.5 h-3.5 text-[#3B82F6]" />
+                <FolderOpen className="w-3.5 h-3.5 text-(--op-accent)" />
                 <span>{t('header.open')}</span>
               </button>
             </div>
 
-            <div className="h-4 w-[1px] bg-[#2D3139] mx-0.5 shrink-0" />
+            <div className="h-4 w-[1px] bg-(--op-border) mx-0.5 shrink-0" />
 
             {/* Tools & Operations */}
             <div className="flex items-center gap-1 shrink-0">
               <button
                 id="btn-batch-tm"
                 onClick={onOpenBatchModal}
-                className="px-2.5 py-1.5 rounded bg-[#1C2128] hover:bg-[#2D3748] text-[#94A3B8] hover:text-[#E2E8F0] text-xs flex items-center gap-1.5 border border-[#2D3139] transition-colors cursor-pointer"
+                className="px-2.5 py-1.5 rounded bg-(--op-bg-raised) hover:bg-(--op-bg-raised-hover) text-(--op-text-secondary) hover:text-(--op-text-primary) text-xs flex items-center gap-1.5 border border-(--op-border) transition-colors cursor-pointer"
                 title="Batch operations & Translation Memory fill"
               >
-                <FileStack className="w-3.5 h-3.5 text-[#F59E0B]" />
+                <FileStack className="w-3.5 h-3.5 text-(--op-warning)" />
                 <span>{t('header.batchTm')}</span>
               </button>
 
               <button
                 id="btn-mo-compiler"
                 onClick={onOpenMoCompilerModal}
-                className="px-2.5 py-1.5 rounded bg-[#1C2128] hover:bg-[#2D3748] text-[#94A3B8] hover:text-[#E2E8F0] text-xs flex items-center gap-1.5 border border-[#2D3139] transition-colors cursor-pointer"
+                className="px-2.5 py-1.5 rounded bg-(--op-bg-raised) hover:bg-(--op-bg-raised-hover) text-(--op-text-secondary) hover:text-(--op-text-primary) text-xs flex items-center gap-1.5 border border-(--op-border) transition-colors cursor-pointer"
                 title="Compile GNU gettext .MO binary files"
               >
-                <Binary className="w-3.5 h-3.5 text-[#38BDF8]" />
+                <Binary className="w-3.5 h-3.5 text-(--op-accent-alt)" />
                 <span>{t('header.compileMo')}</span>
               </button>
 
               <button
                 id="btn-import"
                 onClick={onOpenImportModal}
-                className="px-2.5 py-1.5 rounded bg-[#1C2128] hover:bg-[#2D3748] text-[#94A3B8] hover:text-[#E2E8F0] text-xs flex items-center gap-1.5 border border-[#2D3139] transition-colors cursor-pointer"
+                className="px-2.5 py-1.5 rounded bg-(--op-bg-raised) hover:bg-(--op-bg-raised-hover) text-(--op-text-secondary) hover:text-(--op-text-primary) text-xs flex items-center gap-1.5 border border-(--op-border) transition-colors cursor-pointer"
                 title="Import translations"
               >
-                <Upload className="w-3.5 h-3.5 text-[#10B981]" />
+                <Upload className="w-3.5 h-3.5 text-(--op-success-strong)" />
                 <span className="hidden sm:inline">{t('header.import')}</span>
               </button>
 
               <button
                 id="btn-export"
                 onClick={onOpenExportModal}
-                className="px-2.5 py-1.5 rounded bg-[#1C2128] hover:bg-[#2D3748] text-[#94A3B8] hover:text-[#E2E8F0] text-xs flex items-center gap-1.5 border border-[#2D3139] transition-colors cursor-pointer"
+                className="px-2.5 py-1.5 rounded bg-(--op-bg-raised) hover:bg-(--op-bg-raised-hover) text-(--op-text-secondary) hover:text-(--op-text-primary) text-xs flex items-center gap-1.5 border border-(--op-border) transition-colors cursor-pointer"
                 title="Export translations"
               >
-                <Download className="w-3.5 h-3.5 text-[#3B82F6]" />
+                <Download className="w-3.5 h-3.5 text-(--op-accent)" />
                 <span>{t('header.export')}</span>
               </button>
 
               <button
                 id="btn-view-raw-po"
                 onClick={onOpenRawPoModal}
-                className="px-2 py-1.5 rounded bg-[#1C2128] hover:bg-[#2D3748] text-[#94A3B8] hover:text-[#E2E8F0] text-xs border border-[#2D3139] transition-colors cursor-pointer"
+                className="px-2 py-1.5 rounded bg-(--op-bg-raised) hover:bg-(--op-bg-raised-hover) text-(--op-text-secondary) hover:text-(--op-text-primary) text-xs border border-(--op-border) transition-colors cursor-pointer"
                 title="Inspect & Edit Raw PO/POT source"
               >
-                <Code2 className="w-3.5 h-3.5 text-[#94A3B8]" />
+                <Code2 className="w-3.5 h-3.5 text-(--op-text-secondary)" />
               </button>
 
             </div>
@@ -864,32 +864,32 @@ export const TopHeader: React.FC<TopHeaderProps> = ({
 
           {/* Right fading edge gradient */}
           <div
-            className={`absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l from-[#16191E] to-transparent pointer-events-none z-10 transition-opacity duration-200 ${
+            className={`absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l from-(--op-bg-surface) to-transparent pointer-events-none z-10 transition-opacity duration-200 ${
               canScrollRight ? 'opacity-100' : 'opacity-0'
             }`}
           />
         </div>
 
         {/* Right Pinned Items: Settings & View Mode Switcher */}
-        <div className="flex items-center gap-2 pl-2 border-l border-[#2D3139] shrink-0">
+        <div className="flex items-center gap-2 pl-2 border-l border-(--op-border) shrink-0">
           {/* Settings Button */}
           <button
             id="btn-open-settings"
             onClick={onOpenSettingsModal}
-            className="px-2.5 py-1.5 rounded bg-[#1C2128] hover:bg-[#2D3748] text-[#94A3B8] hover:text-[#E2E8F0] text-xs flex items-center gap-1.5 border border-[#2D3139] transition-colors cursor-pointer shrink-0"
+            className="px-2.5 py-1.5 rounded bg-(--op-bg-raised) hover:bg-(--op-bg-raised-hover) text-(--op-text-secondary) hover:text-(--op-text-primary) text-xs flex items-center gap-1.5 border border-(--op-border) transition-colors cursor-pointer shrink-0"
             title="Preferences, Modular Settings, and TM"
           >
-            <Settings className="w-3.5 h-3.5 text-[#94A3B8]" />
+            <Settings className="w-3.5 h-3.5 text-(--op-text-secondary)" />
             <span className="hidden sm:inline">{t('header.settings')}</span>
           </button>
 
-          <div className="flex bg-[#090B0E] p-0.5 rounded border border-[#2D3139] shrink-0">
+          <div className="flex bg-(--op-bg-canvas) p-0.5 rounded border border-(--op-border) shrink-0">
             <button
               onClick={() => setViewMode('editor')}
               className={`px-2 sm:px-2.5 py-1 rounded text-xs flex items-center gap-1.5 cursor-pointer transition-all ${
                 viewMode === 'editor'
-                  ? 'bg-[#2D3748] text-white font-medium shadow-xs'
-                  : 'text-[#94A3B8] hover:text-[#E2E8F0]'
+                  ? 'bg-(--op-bg-raised-hover) text-white font-medium shadow-xs'
+                  : 'text-(--op-text-secondary) hover:text-(--op-text-primary)'
               }`}
               title="Standard Single Language Editor"
             >
@@ -900,8 +900,8 @@ export const TopHeader: React.FC<TopHeaderProps> = ({
               onClick={() => setViewMode('matrix')}
               className={`px-2 sm:px-2.5 py-1 rounded text-xs flex items-center gap-1.5 cursor-pointer transition-all ${
                 viewMode === 'matrix'
-                  ? 'bg-[#2D3748] text-white font-medium shadow-xs'
-                  : 'text-[#94A3B8] hover:text-[#E2E8F0]'
+                  ? 'bg-(--op-bg-raised-hover) text-white font-medium shadow-xs'
+                  : 'text-(--op-text-secondary) hover:text-(--op-text-primary)'
               }`}
               title="Multi-Language Matrix (Side-by-side editing)"
             >

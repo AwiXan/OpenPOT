@@ -366,39 +366,39 @@ export const SidebarCategories: React.FC<SidebarCategoriesProps> = ({
           onDrop={(e) => handleNodeDrop(e, node.fullPath)}
           onClick={() => onSelectCategory(isSelected ? null : node.fullPath)}
           className={`group flex items-center justify-between h-7 px-2 rounded-md text-xs cursor-pointer transition-colors relative ${
-            isDragging ? 'opacity-30 bg-[#1E293B]' : ''
+            isDragging ? 'opacity-30 bg-(--op-bg-active)' : ''
           } ${
             isEntryTarget
-              ? 'bg-[#38BDF830] border-2 border-dashed border-[#38BDF8] text-white shadow-md'
+              ? 'bg-(--op-accent-alt)/19 border-2 border-dashed border-(--op-accent-alt) text-white shadow-md'
               : isTargetInside
-              ? 'bg-[#38BDF820] border border-dashed border-[#38BDF8]'
+              ? 'bg-(--op-accent-alt)/13 border border-dashed border-(--op-accent-alt)'
               : isSelected
-              ? 'bg-[#1E293B] text-white font-medium shadow-xs'
+              ? 'bg-(--op-bg-active) text-white font-medium shadow-xs'
               : isAncestorOfSelected
-              ? 'bg-[#161F2E]/40 text-[#38BDF8]'
-              : 'text-[#94A3B8] hover:bg-[#1C2128] hover:text-[#E2E8F0]'
+              ? 'bg-[#161F2E]/40 text-(--op-accent-alt)'
+              : 'text-(--op-text-secondary) hover:bg-(--op-bg-raised) hover:text-(--op-text-primary)'
           }`}
         >
 
           {Array.from({ length: node.level }).map((_, idx) => (
             <div
               key={idx}
-              className="absolute top-0 bottom-0 w-[1px] bg-[#2D3139]/60 pointer-events-none"
+              className="absolute top-0 bottom-0 w-[1px] bg-(--op-border)/60 pointer-events-none"
               style={{ left: `${idx * 16 + 15}px` }}
             />
           ))}
 
 
           {isTargetBefore && (
-            <div className="absolute top-0 left-0 right-0 h-[2px] bg-[#38BDF8] z-20 shadow-[0_0_4px_#38BDF8]" />
+            <div className="absolute top-0 left-0 right-0 h-[2px] bg-(--op-accent-alt) z-20 shadow-[0_0_4px_var(--op-accent-alt)]" />
           )}
 
           {isTargetAfter && (
-            <div className="absolute bottom-0 left-0 right-0 h-[2px] bg-[#38BDF8] z-20 shadow-[0_0_4px_#38BDF8]" />
+            <div className="absolute bottom-0 left-0 right-0 h-[2px] bg-(--op-accent-alt) z-20 shadow-[0_0_4px_var(--op-accent-alt)]" />
           )}
 
           {isSelected && (
-            <div className="absolute left-0 top-1 bottom-1 w-0.5 bg-[#38BDF8] rounded-r z-10" />
+            <div className="absolute left-0 top-1 bottom-1 w-0.5 bg-(--op-accent-alt) rounded-r z-10" />
           )}
 
 
@@ -407,11 +407,11 @@ export const SidebarCategories: React.FC<SidebarCategoriesProps> = ({
               <button
                 type="button"
                 onClick={(e) => toggleExpand(node.fullPath, e)}
-                className="w-4 h-4 flex items-center justify-center rounded hover:bg-[#2D3139] text-[#64748B] hover:text-[#E2E8F0] transition-colors shrink-0"
+                className="w-4 h-4 flex items-center justify-center rounded hover:bg-(--op-border) text-(--op-text-muted) hover:text-(--op-text-primary) transition-colors shrink-0"
               >
                 <ChevronRight
                   className={`w-3.5 h-3.5 transition-transform duration-150 ${
-                    isExpanded ? 'rotate-90 text-[#38BDF8]' : ''
+                    isExpanded ? 'rotate-90 text-(--op-accent-alt)' : ''
                   }`}
                 />
               </button>
@@ -420,11 +420,11 @@ export const SidebarCategories: React.FC<SidebarCategoriesProps> = ({
             )}
 
             {hasChildren && isExpanded ? (
-              <FolderOpen className="w-3.5 h-3.5 text-[#38BDF8] shrink-0 pointer-events-none" />
+              <FolderOpen className="w-3.5 h-3.5 text-(--op-accent-alt) shrink-0 pointer-events-none" />
             ) : (
               <Folder
                 className={`w-3.5 h-3.5 shrink-0 transition-colors pointer-events-none ${
-                  isSelected || isEntryTarget ? 'text-[#38BDF8]' : 'text-[#64748B] group-hover:text-[#94A3B8]'
+                  isSelected || isEntryTarget ? 'text-(--op-accent-alt)' : 'text-(--op-text-muted) group-hover:text-(--op-text-secondary)'
                 }`}
               />
             )}
@@ -445,7 +445,7 @@ export const SidebarCategories: React.FC<SidebarCategoriesProps> = ({
                   }
                 }}
                 onBlur={() => handleCommitRename(node)}
-                className="bg-[#090B0E] border border-[#3B82F6] rounded px-1 text-[11px] font-mono text-[#38BDF8] outline-none max-w-[120px]"
+                className="bg-(--op-bg-canvas) border border-(--op-accent) rounded px-1 text-[11px] font-mono text-(--op-accent-alt) outline-none max-w-[120px]"
               />
             ) : (
               <span
@@ -455,29 +455,29 @@ export const SidebarCategories: React.FC<SidebarCategoriesProps> = ({
                   setEditingCategoryName(node.name);
                 }}
                 title={`Drag to move • Drop keys here • ${node.fullPath}`}
-                className="truncate font-mono text-[11px] tracking-tight shrink-0 max-w-[110px] hover:text-[#38BDF8] transition-colors cursor-grab active:cursor-grabbing"
+                className="truncate font-mono text-[11px] tracking-tight shrink-0 max-w-[110px] hover:text-(--op-accent-alt) transition-colors cursor-grab active:cursor-grabbing"
               >
                 {node.name}
               </span>
             )}
 
             {hasWarnings && (
-              <div className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[9px] font-mono leading-none bg-gradient-to-r from-[#EF444422] via-[#F9731618] to-transparent border border-white/5 shrink-0 pointer-events-none">
+              <div className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[9px] font-mono leading-none bg-gradient-to-r from-(--op-danger)/13 via-(--op-accent-orange)/9 to-transparent border border-white/5 shrink-0 pointer-events-none">
                 {node.untranslatedCount > 0 && (
-                  <span className="flex items-center gap-0.5 text-[#EF4444] font-semibold">
-                    <span className="w-1.5 h-1.5 rounded-full bg-[#EF4444]" />
+                  <span className="flex items-center gap-0.5 text-(--op-danger) font-semibold">
+                    <span className="w-1.5 h-1.5 rounded-full bg-(--op-danger)" />
                     <span>{node.untranslatedCount}</span>
                   </span>
                 )}
                 {node.issueCount > 0 && (
-                  <span className="flex items-center gap-0.5 text-[#F97316] font-semibold">
-                    <span className="w-1.5 h-1.5 rounded-full bg-[#F97316]" />
+                  <span className="flex items-center gap-0.5 text-(--op-accent-orange) font-semibold">
+                    <span className="w-1.5 h-1.5 rounded-full bg-(--op-accent-orange)" />
                     <span>{node.issueCount}</span>
                   </span>
                 )}
                 {node.fuzzyCount > 0 && (
-                  <span className="flex items-center gap-0.5 text-[#F59E0B] font-semibold">
-                    <span className="w-1.5 h-1.5 rounded-full bg-[#F59E0B]" />
+                  <span className="flex items-center gap-0.5 text-(--op-warning) font-semibold">
+                    <span className="w-1.5 h-1.5 rounded-full bg-(--op-warning)" />
                     <span>{node.fuzzyCount}</span>
                   </span>
                 )}
@@ -493,7 +493,7 @@ export const SidebarCategories: React.FC<SidebarCategoriesProps> = ({
                   e.stopPropagation();
                   onCreateKeyInCategory?.(node.fullPath);
                 }}
-                className="p-1 rounded hover:bg-[#2D3748] text-[#64748B] hover:text-[#4ADE80] transition-colors"
+                className="p-1 rounded hover:bg-(--op-bg-raised-hover) text-(--op-text-muted) hover:text-(--op-success) transition-colors"
                 title={`New Key in "${node.name}"`}
               >
                 <FilePlus className="w-3 h-3" />
@@ -507,7 +507,7 @@ export const SidebarCategories: React.FC<SidebarCategoriesProps> = ({
                   setNewCategoryPath(`${node.fullPath} / `);
                   setIsAddingCategory(true);
                 }}
-                className="p-1 rounded hover:bg-[#2D3748] text-[#64748B] hover:text-[#38BDF8] transition-colors"
+                className="p-1 rounded hover:bg-(--op-bg-raised-hover) text-(--op-text-muted) hover:text-(--op-accent-alt) transition-colors"
                 title={`New Subfolder in "${node.name}"`}
               >
                 <FolderPlus className="w-3 h-3" />
@@ -519,7 +519,7 @@ export const SidebarCategories: React.FC<SidebarCategoriesProps> = ({
                   e.stopPropagation();
                   onDeleteCategory?.(node.fullPath);
                 }}
-                className="p-1 rounded hover:bg-rose-950/40 text-[#64748B] hover:text-[#EF4444] transition-colors"
+                className="p-1 rounded hover:bg-rose-950/40 text-(--op-text-muted) hover:text-(--op-danger) transition-colors"
                 title={`Delete category "${node.name}"`}
               >
                 <Trash2 className="w-3 h-3" />
@@ -529,8 +529,8 @@ export const SidebarCategories: React.FC<SidebarCategoriesProps> = ({
             <span
               className={`text-[10px] font-mono px-1.5 py-0.2 rounded border ${
                 isSelected
-                  ? 'bg-[#090B0E] border-[#38BDF833] text-[#38BDF8]'
-                  : 'bg-[#090B0E]/60 border-[#2D3139]/40 text-[#64748B]'
+                  ? 'bg-(--op-bg-canvas) border-(--op-accent-alt)/20 text-(--op-accent-alt)'
+                  : 'bg-(--op-bg-canvas)/60 border-(--op-border)/40 text-(--op-text-muted)'
               }`}
             >
               {node.totalCount}
@@ -556,24 +556,24 @@ export const SidebarCategories: React.FC<SidebarCategoriesProps> = ({
           e.dataTransfer.dropEffect = 'move';
         }
       }}
-      className="w-full border-r border-[#2D3139] bg-[#16191E] flex flex-col h-full select-none text-[#E2E8F0] overflow-hidden relative"
+      className="w-full border-r border-(--op-border) bg-(--op-bg-surface) flex flex-col h-full select-none text-(--op-text-primary) overflow-hidden relative"
     >
 
-      <div className="p-2.5 border-b border-[#2D3139] bg-[#16191E] shrink-0">
+      <div className="p-2.5 border-b border-(--op-border) bg-(--op-bg-surface) shrink-0">
         <div className="relative">
-          <Search className="w-3.5 h-3.5 absolute left-2.5 top-2.5 text-[#64748B]" />
+          <Search className="w-3.5 h-3.5 absolute left-2.5 top-2.5 text-(--op-text-muted)" />
           <input
             id="input-sidebar-search"
             type="text"
             placeholder={t('sidebar.searchPlaceholder')}
             value={searchQuery}
             onChange={(e) => onSearchChange(e.target.value)}
-            className="w-full pl-8 pr-6 py-1.5 bg-[#090B0E] border border-[#2D3139] rounded text-xs text-[#E2E8F0] placeholder-[#64748B] outline-none focus:border-[#3B82F6] transition-colors"
+            className="w-full pl-8 pr-6 py-1.5 bg-(--op-bg-canvas) border border-(--op-border) rounded text-xs text-(--op-text-primary) placeholder-(--op-text-muted) outline-none focus:border-(--op-accent) transition-colors"
           />
           {searchQuery && (
             <button
               onClick={() => onSearchChange('')}
-              className="absolute right-2 top-2 text-[11px] text-[#64748B] hover:text-[#E2E8F0] font-mono cursor-pointer"
+              className="absolute right-2 top-2 text-[11px] text-(--op-text-muted) hover:text-(--op-text-primary) font-mono cursor-pointer"
               title="Clear search"
             >
               ×
@@ -586,14 +586,14 @@ export const SidebarCategories: React.FC<SidebarCategoriesProps> = ({
       <div
         ref={statusFiltersRef}
         style={{ height: `${statusFiltersHeight}px`, minHeight: '90px' }}
-        className="p-2 overflow-y-auto space-y-0.5 bg-[#16191E] shrink-0 custom-scrollbar"
+        className="p-2 overflow-y-auto space-y-0.5 bg-(--op-bg-surface) shrink-0 custom-scrollbar"
       >
-        <div className="flex items-center justify-between text-[10px] font-bold text-[#64748B] uppercase tracking-wider mb-1.5 px-1.5 pt-0.5">
+        <div className="flex items-center justify-between text-[10px] font-bold text-(--op-text-muted) uppercase tracking-wider mb-1.5 px-1.5 pt-0.5">
           <span>{t('sidebar.statusFilters')}</span>
           {filterStatus !== 'all' && (
             <button
               onClick={() => onFilterStatusChange('all')}
-              className="text-[#38BDF8] hover:text-white transition-colors cursor-pointer text-[10px] font-mono normal-case flex items-center gap-1"
+              className="text-(--op-accent-alt) hover:text-white transition-colors cursor-pointer text-[10px] font-mono normal-case flex items-center gap-1"
               title="Reset status filter"
             >
               <span>{t('sidebar.clear')}</span>
@@ -607,24 +607,24 @@ export const SidebarCategories: React.FC<SidebarCategoriesProps> = ({
             id: 'all' as FilterStatus,
             label: t('sidebar.allStrings'),
             icon: Layers,
-            iconColor: 'text-[#3B82F6]',
+            iconColor: 'text-(--op-accent)',
             count: stats.total,
           },
           {
             id: 'untranslated' as FilterStatus,
             label: t('sidebar.untranslated'),
             icon: FileQuestion,
-            iconColor: 'text-[#EF4444]',
+            iconColor: 'text-(--op-danger)',
             count: stats.untranslated,
-            badge: stats.untranslated > 0 ? 'bg-[#EF44441A] text-[#EF4444] border-[#EF444433]' : undefined,
+            badge: stats.untranslated > 0 ? 'bg-(--op-danger)/10 text-(--op-danger) border-(--op-danger)/20' : undefined,
           },
           {
             id: 'fuzzy' as FilterStatus,
             label: t('sidebar.fuzzy'),
             icon: Clock,
-            iconColor: 'text-[#F59E0B]',
+            iconColor: 'text-(--op-warning)',
             count: stats.fuzzy,
-            badge: stats.fuzzy > 0 ? 'bg-[#F59E0B1A] text-[#F59E0B] border-[#F59E0B33]' : undefined,
+            badge: stats.fuzzy > 0 ? 'bg-(--op-warning)/10 text-(--op-warning) border-(--op-warning)/20' : undefined,
           },
           {
             id: 'issues' as FilterStatus,
@@ -638,7 +638,7 @@ export const SidebarCategories: React.FC<SidebarCategoriesProps> = ({
             id: 'plurals' as FilterStatus,
             label: t('sidebar.pluralForms'),
             icon: Hash,
-            iconColor: 'text-[#4ADE80]',
+            iconColor: 'text-(--op-success)',
             count: stats.plurals,
           },
         ].map((item) => {
@@ -651,16 +651,16 @@ export const SidebarCategories: React.FC<SidebarCategoriesProps> = ({
               onClick={() => onFilterStatusChange(item.id)}
               className={`w-full flex items-center justify-between h-7 px-2 rounded-md text-xs cursor-pointer transition-colors relative ${
                 isActive
-                  ? 'bg-[#1E293B] text-white font-medium shadow-xs'
-                  : 'text-[#94A3B8] hover:bg-[#1C2128] hover:text-[#E2E8F0]'
+                  ? 'bg-(--op-bg-active) text-white font-medium shadow-xs'
+                  : 'text-(--op-text-secondary) hover:bg-(--op-bg-raised) hover:text-(--op-text-primary)'
               }`}
             >
               {isActive && (
-                <div className="absolute left-0 top-1 bottom-1 w-0.5 bg-[#38BDF8] rounded-r" />
+                <div className="absolute left-0 top-1 bottom-1 w-0.5 bg-(--op-accent-alt) rounded-r" />
               )}
 
               <div className="flex items-center gap-2 min-w-0">
-                <Icon className={`w-3.5 h-3.5 shrink-0 ${isActive ? item.iconColor : 'text-[#64748B]'}`} />
+                <Icon className={`w-3.5 h-3.5 shrink-0 ${isActive ? item.iconColor : 'text-(--op-text-muted)'}`} />
                 <span className="truncate">{item.label}</span>
               </div>
 
@@ -669,8 +669,8 @@ export const SidebarCategories: React.FC<SidebarCategoriesProps> = ({
                   item.badge
                     ? item.badge
                     : isActive
-                    ? 'bg-[#090B0E] border-[#38BDF833] text-[#38BDF8]'
-                    : 'bg-[#090B0E]/60 border-[#2D3139]/40 text-[#64748B]'
+                    ? 'bg-(--op-bg-canvas) border-(--op-accent-alt)/20 text-(--op-accent-alt)'
+                    : 'bg-(--op-bg-canvas)/60 border-(--op-border)/40 text-(--op-text-muted)'
                 }`}
               >
                 {item.count}
@@ -683,20 +683,20 @@ export const SidebarCategories: React.FC<SidebarCategoriesProps> = ({
       <div
         onMouseDown={() => setIsDraggingSplit(true)}
         onDoubleClick={() => setStatusFiltersHeight(205)}
-        className={`h-1.5 hover:h-2 bg-[#2D3139] hover:bg-[#3B82F6] cursor-row-resize transition-all z-10 flex items-center justify-center shrink-0 select-none group ${
-          isDraggingSplit ? 'bg-[#3B82F6] !h-2 shadow-[0_0_8px_rgba(59,130,246,0.8)]' : ''
+        className={`h-1.5 hover:h-2 bg-(--op-border) hover:bg-(--op-accent) cursor-row-resize transition-all z-10 flex items-center justify-center shrink-0 select-none group ${
+          isDraggingSplit ? 'bg-(--op-accent) !h-2 shadow-[0_0_8px_rgba(59,130,246,0.8)]' : ''
         }`}
         title={t('sidebar.dragResize')}
       >
-        <GripHorizontal className="w-4 h-2.5 text-[#64748B] group-hover:text-white opacity-70 group-hover:opacity-100 transition-opacity" />
+        <GripHorizontal className="w-4 h-2.5 text-(--op-text-muted) group-hover:text-white opacity-70 group-hover:opacity-100 transition-opacity" />
       </div>
 
-      <div className="px-3 pt-2 pb-1 flex items-center justify-between shrink-0 bg-[#16191E]">
+      <div className="px-3 pt-2 pb-1 flex items-center justify-between shrink-0 bg-(--op-bg-surface)">
         <div className="flex items-center gap-1.5">
-          <span className="text-[10px] font-bold text-[#64748B] uppercase tracking-wider">
+          <span className="text-[10px] font-bold text-(--op-text-muted) uppercase tracking-wider">
             {t('sidebar.nestedCategories')}
           </span>
-          <span className="px-1.5 py-0.2 rounded bg-[#090B0E] border border-[#2D3139] text-[#38BDF8] text-[9px] font-mono">
+          <span className="px-1.5 py-0.2 rounded bg-(--op-bg-canvas) border border-(--op-border) text-(--op-accent-alt) text-[9px] font-mono">
             {categoryTree.length}
           </span>
         </div>
@@ -708,21 +708,21 @@ export const SidebarCategories: React.FC<SidebarCategoriesProps> = ({
               setNewCategoryPath('');
               setIsAddingCategory((prev) => !prev);
             }}
-            className="p-1 rounded text-[#38BDF8] hover:text-white hover:bg-[#3B82F6] transition-colors"
+            className="p-1 rounded text-(--op-accent-alt) hover:text-white hover:bg-(--op-accent) transition-colors"
             title={t('category.createCategory')}
           >
             <Plus className="w-3.5 h-3.5" />
           </button>
           <button
             onClick={expandAll}
-            className="p-1 rounded text-[#64748B] hover:text-[#E2E8F0] hover:bg-[#2D3139] transition-colors"
+            className="p-1 rounded text-(--op-text-muted) hover:text-(--op-text-primary) hover:bg-(--op-border) transition-colors"
             title={t('sidebar.expandAll')}
           >
             <ChevronsDown className="w-3 h-3" />
           </button>
           <button
             onClick={collapseAll}
-            className="p-1 rounded text-[#64748B] hover:text-[#E2E8F0] hover:bg-[#2D3139] transition-colors"
+            className="p-1 rounded text-(--op-text-muted) hover:text-(--op-text-primary) hover:bg-(--op-border) transition-colors"
             title={t('sidebar.collapseAll')}
           >
             <ChevronsUp className="w-3 h-3" />
@@ -731,9 +731,9 @@ export const SidebarCategories: React.FC<SidebarCategoriesProps> = ({
       </div>
 
       {isAddingCategory && (
-        <div className="px-2.5 py-2 bg-[#090B0E] border-b border-[#2D3139] shrink-0">
-          <div className="text-[10px] font-semibold text-[#E2E8F0] mb-1 flex items-center gap-1">
-            <FolderPlus className="w-3 h-3 text-[#38BDF8]" />
+        <div className="px-2.5 py-2 bg-(--op-bg-canvas) border-b border-(--op-border) shrink-0">
+          <div className="text-[10px] font-semibold text-(--op-text-primary) mb-1 flex items-center gap-1">
+            <FolderPlus className="w-3 h-3 text-(--op-accent-alt)" />
             <span>
               {parentPathForNewCategory
                 ? `${t('category.addSubcategory')}: ${parentPathForNewCategory}`
@@ -757,7 +757,7 @@ export const SidebarCategories: React.FC<SidebarCategoriesProps> = ({
                 }
               }}
               placeholder={t('category.categoryPlaceholder')}
-              className="flex-1 bg-[#16191E] border border-[#3B82F6] rounded px-2 py-1 text-xs font-mono text-[#38BDF8] placeholder-[#64748B] outline-none"
+              className="flex-1 bg-(--op-bg-surface) border border-(--op-accent) rounded px-2 py-1 text-xs font-mono text-(--op-accent-alt) placeholder-(--op-text-muted) outline-none"
             />
             <button
               onClick={() => {
@@ -767,7 +767,7 @@ export const SidebarCategories: React.FC<SidebarCategoriesProps> = ({
                   setNewCategoryPath('');
                 }
               }}
-              className="px-2.5 py-1 rounded bg-[#3B82F6] hover:bg-[#2563EB] text-white text-[11px] font-medium cursor-pointer shrink-0"
+              className="px-2.5 py-1 rounded bg-(--op-accent) hover:bg-(--op-accent-strong) text-white text-[11px] font-medium cursor-pointer shrink-0"
             >
               {t('common.save')}
             </button>
@@ -776,7 +776,7 @@ export const SidebarCategories: React.FC<SidebarCategoriesProps> = ({
                 setIsAddingCategory(false);
                 setNewCategoryPath('');
               }}
-              className="px-2 py-1 rounded bg-[#1C2128] hover:bg-[#2D3139] text-[#94A3B8] text-[11px] cursor-pointer shrink-0"
+              className="px-2 py-1 rounded bg-(--op-bg-raised) hover:bg-(--op-border) text-(--op-text-secondary) text-[11px] cursor-pointer shrink-0"
             >
               {t('common.cancel')}
             </button>
@@ -796,7 +796,7 @@ export const SidebarCategories: React.FC<SidebarCategoriesProps> = ({
         {categoryTree.map((rootNode) => renderTreeNode(rootNode))}
 
         {categoryTree.length === 0 && (
-          <div className="text-center py-6 text-[#64748B] text-xs">
+          <div className="text-center py-6 text-(--op-text-muted) text-xs">
             {t('sidebar.noMatchingCategories')}
           </div>
         )}
@@ -816,8 +816,8 @@ export const SidebarCategories: React.FC<SidebarCategoriesProps> = ({
             onDrop={handleDropOnRoot}
             className={`mt-2 mx-1 p-2 rounded border border-dashed flex items-center justify-center gap-1.5 text-[11px] font-mono transition-colors cursor-pointer ${
               isDragOverRoot
-                ? 'border-[#38BDF8] bg-[#38BDF81A] text-[#38BDF8]'
-                : 'border-[#2D3139] text-[#64748B] hover:border-[#38BDF860]'
+                ? 'border-(--op-accent-alt) bg-(--op-accent-alt)/10 text-(--op-accent-alt)'
+                : 'border-(--op-border) text-(--op-text-muted) hover:border-(--op-accent-alt)/38'
             }`}
           >
             <CornerDownRight className="w-3.5 h-3.5" />
@@ -827,16 +827,16 @@ export const SidebarCategories: React.FC<SidebarCategoriesProps> = ({
       </div>
 
       {selectedCategory && (
-        <div className="px-2.5 py-1.5 bg-[#090B0E] border-t border-[#2D3139] flex items-center justify-between text-[11px] text-[#38BDF8] font-mono shrink-0 shadow-lg animate-in fade-in duration-150">
+        <div className="px-2.5 py-1.5 bg-(--op-bg-canvas) border-t border-(--op-border) flex items-center justify-between text-[11px] text-(--op-accent-alt) font-mono shrink-0 shadow-lg animate-in fade-in duration-150">
           <div className="flex items-center gap-1.5 min-w-0 overflow-hidden">
-            <Filter className="w-3 h-3 text-[#38BDF8] shrink-0" />
+            <Filter className="w-3 h-3 text-(--op-accent-alt) shrink-0" />
             <span className="truncate" title={selectedCategory}>
               {selectedCategory}
             </span>
           </div>
           <button
             onClick={() => onSelectCategory(null)}
-            className="p-1 rounded hover:bg-[#1C2128] text-[#64748B] hover:text-[#E2E8F0] transition-colors ml-1 shrink-0 cursor-pointer"
+            className="p-1 rounded hover:bg-(--op-bg-raised) text-(--op-text-muted) hover:text-(--op-text-primary) transition-colors ml-1 shrink-0 cursor-pointer"
             title="Clear category filter"
           >
             <X className="w-3.5 h-3.5" />

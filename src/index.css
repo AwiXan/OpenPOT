@@ -1,5 +1,77 @@
 @import "tailwindcss";
 
+/*
+ * Theme tokens
+ * ------------
+ * Every color the app uses is a CSS custom property here. Components
+ * reference them via arbitrary Tailwind values, e.g. `bg-(--op-bg-surface)`.
+ * Swapping the whole app's palette means editing this block (or adding a new
+ * `[data-theme="..."]` block below) - no component file needs to change.
+ */
+:root {
+  /* Saturation (0..1): how much of the accent hue bleeds into the neutral
+   * background/border tones below. 0 = perfectly gray, 1 = maximum tint.
+   * Set at runtime via document.documentElement.style, from Settings ->
+   * Appearance. Each token below caps its own blend so near-black surfaces
+   * don't blow out in lightness even at 1. */
+  --op-tint: 0.5;
+
+  /* Backgrounds, darkest to lightest - perfectly neutral gray blended toward
+   * the accent hue. Coefficients are doubled vs. a naive 0-100% blend so the
+   * old "always somewhat tinted" default now sits at 0.5, leaving 0 as a true
+   * flat gray and headroom above 0.5 for a stronger tint than before. */
+  --op-bg-canvas: color-mix(in oklch, #0A0A0A, var(--op-accent) calc(var(--op-tint) * 24%));
+  --op-bg-inset: color-mix(in oklch, #0F0F0F, var(--op-accent) calc(var(--op-tint) * 24%));
+  --op-bg-footer: color-mix(in oklch, #101010, var(--op-accent) calc(var(--op-tint) * 24%));
+  --op-bg-surface: color-mix(in oklch, #181818, var(--op-accent) calc(var(--op-tint) * 36%));
+  --op-bg-raised: color-mix(in oklch, #1E1E1E, var(--op-accent) calc(var(--op-tint) * 40%));
+  --op-bg-raised-hover: color-mix(in oklch, #303030, var(--op-accent) calc(var(--op-tint) * 52%));
+  --op-bg-active: color-mix(in oklch, #242424, var(--op-accent) calc(var(--op-tint) * 60%));
+
+  /* Borders */
+  --op-border: color-mix(in oklch, #323232, var(--op-accent) calc(var(--op-tint) * 48%));
+  --op-border-subtle: color-mix(in oklch, #262626, var(--op-accent) calc(var(--op-tint) * 36%));
+
+  /* Text - left alone for readability regardless of saturation */
+  --op-text-primary: #E2E8F0;
+  --op-text-secondary: #94A3B8;
+  --op-text-muted: #64748B;
+  --op-text-faint: #8B949E;
+
+  /* Accent (interactive / brand) - the part that changes most between themes */
+  --op-accent: #3B82F6;
+  --op-accent-strong: #2563EB;
+  --op-accent-alt: #38BDF8;
+
+  /* Status */
+  --op-success: #4ADE80;
+  --op-success-strong: #10B981;
+  --op-warning: #F59E0B;
+  --op-danger: #EF4444;
+  --op-accent-orange: #F97316;
+}
+
+/* Emerald preset - green/teal accent, same neutrals */
+[data-theme="emerald"] {
+  --op-accent: #10B981;
+  --op-accent-strong: #059669;
+  --op-accent-alt: #34D399;
+}
+
+/* Violet preset - purple accent, same neutrals */
+[data-theme="violet"] {
+  --op-accent: #8B5CF6;
+  --op-accent-strong: #7C3AED;
+  --op-accent-alt: #C084FC;
+}
+
+/* Orange preset - warm accent, same neutrals */
+[data-theme="orange"] {
+  --op-accent: #F97316;
+  --op-accent-strong: #C2410C;
+  --op-accent-alt: #FB923C;
+}
+
 @layer utilities {
   .no-scrollbar::-webkit-scrollbar {
     display: none;
@@ -13,35 +85,35 @@
 @layer components {
   /* Layout & Main Panels */
   .app-container {
-    @apply flex flex-col bg-[#090B0E] text-[#E2E8F0] font-sans antialiased overflow-hidden origin-top-left;
+    @apply flex flex-col bg-(--op-bg-canvas) text-(--op-text-primary) font-sans antialiased overflow-hidden origin-top-left;
   }
-  
+
   /* Toast Notification */
   .toast-container {
     @apply fixed bottom-6 left-1/2 z-50 px-4 py-2.5 rounded-lg shadow-xl text-xs font-medium border flex items-center gap-2 backdrop-blur-md;
     animation: toast-slide-up 0.25s ease-out forwards;
   }
   .toast-success {
-    @apply bg-[#10B9811A] border-[#10B981] text-[#4ADE80];
+    @apply bg-(--op-success-strong)/10 border-(--op-success-strong) text-(--op-success);
   }
   .toast-warning {
-    @apply bg-[#F59E0B1A] border-[#F59E0B] text-[#F59E0B];
+    @apply bg-(--op-warning)/10 border-(--op-warning) text-(--op-warning);
   }
   .toast-info {
-    @apply bg-[#3B82F61A] border-[#3B82F6] text-[#38BDF8];
+    @apply bg-(--op-accent)/10 border-(--op-accent) text-(--op-accent-alt);
   }
 
   /* Resizers */
   .split-resizer {
-    @apply w-1.5 hover:w-2 bg-[#2D3139] hover:bg-[#3B82F6] cursor-col-resize transition-all z-20 flex items-center justify-center shrink-0 select-none relative;
+    @apply w-1.5 hover:w-2 bg-(--op-border) hover:bg-(--op-accent) cursor-col-resize transition-all z-20 flex items-center justify-center shrink-0 select-none relative;
   }
   .split-resizer-active {
-    @apply bg-[#3B82F6] !w-2 shadow-[0_0_10px_rgba(59,130,246,0.8)];
+    @apply bg-(--op-accent) !w-2 shadow-[0_0_10px_var(--op-accent)];
   }
   .split-resizer-line {
-    @apply w-0.5 h-6 bg-[#64748B] rounded-full transition-colors opacity-60;
+    @apply w-0.5 h-6 bg-(--op-text-muted) rounded-full transition-colors opacity-60;
   }
-  
+
   /* Standard CSS targeting the child element when the parent is hovered */
   .split-resizer:hover .split-resizer-line {
     @apply bg-white opacity-100;
@@ -49,7 +121,7 @@
 
   /* Footer */
   .footer-bar {
-    @apply h-6 bg-[#0F1115] border-t border-[#21262D] flex items-center px-3 justify-between text-[11px] text-[#8B949E] select-none font-mono shrink-0 overflow-hidden whitespace-nowrap;
+    @apply h-6 bg-(--op-bg-footer) border-t border-(--op-border-subtle) flex items-center px-3 justify-between text-[11px] text-(--op-text-faint) select-none font-mono shrink-0 overflow-hidden whitespace-nowrap;
   }
 }
 
@@ -72,14 +144,14 @@
 }
 
 ::-webkit-scrollbar-track {
-  background: #090B0E;
+  background: var(--op-bg-canvas);
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #2D3139;
+  background: var(--op-border);
   border-radius: 2px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #3B82F6;
+  background: var(--op-accent);
 }

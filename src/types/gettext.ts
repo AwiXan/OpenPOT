@@ -146,7 +146,11 @@ export interface WorkspaceGitState {
 
 export type PoNamingScheme = 'domain_lang' | 'lang' | 'locale_path';
 
+export type AppTheme = 'obsidian' | 'emerald' | 'violet' | 'orange';
+
 export interface AppSettings {
+  theme?: AppTheme;
+  themeSaturation?: number; // 0 (gray) to 1 (fully tinted), default 0.5
   fuzzyMatchingThreshold: number; // 0 to 100, default 80
   autoMarkFuzzyUnder100: boolean;
   authorName: string;

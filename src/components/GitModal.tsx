@@ -51,24 +51,24 @@ interface GitModalProps {
 type StatusMeta = { label: string; className: string };
 
 const WORKING_STATUS_META: Record<string, StatusMeta> = {
-  A: { label: 'A', className: 'text-[#4ADE80] bg-[#4ADE801A] border-[#4ADE8033]' },
-  M: { label: 'M', className: 'text-[#F59E0B] bg-[#F59E0B1A] border-[#F59E0B33]' },
-  D: { label: 'D', className: 'text-[#EF4444] bg-[#EF44441A] border-[#EF444433]' },
-  R: { label: 'R', className: 'text-[#38BDF8] bg-[#38BDF81A] border-[#38BDF833]' },
-  C: { label: 'C', className: 'text-[#38BDF8] bg-[#38BDF81A] border-[#38BDF833]' },
-  U: { label: 'U', className: 'text-[#EF4444] bg-[#EF44441A] border-[#EF444433]' },
-  UNTRACKED: { label: 'U', className: 'text-[#94A3B8] bg-[#94A3B81A] border-[#94A3B833]' },
-  DEFAULT: { label: '?', className: 'text-[#94A3B8] bg-[#94A3B81A] border-[#94A3B833]' },
+  A: { label: 'A', className: 'text-(--op-success) bg-(--op-success)/10 border-(--op-success)/20' },
+  M: { label: 'M', className: 'text-(--op-warning) bg-(--op-warning)/10 border-(--op-warning)/20' },
+  D: { label: 'D', className: 'text-(--op-danger) bg-(--op-danger)/10 border-(--op-danger)/20' },
+  R: { label: 'R', className: 'text-(--op-accent-alt) bg-(--op-accent-alt)/10 border-(--op-accent-alt)/20' },
+  C: { label: 'C', className: 'text-(--op-accent-alt) bg-(--op-accent-alt)/10 border-(--op-accent-alt)/20' },
+  U: { label: 'U', className: 'text-(--op-danger) bg-(--op-danger)/10 border-(--op-danger)/20' },
+  UNTRACKED: { label: 'U', className: 'text-(--op-text-secondary) bg-(--op-text-secondary)/10 border-(--op-text-secondary)/20' },
+  DEFAULT: { label: '?', className: 'text-(--op-text-secondary) bg-(--op-text-secondary)/10 border-(--op-text-secondary)/20' },
 };
 
 const COMMIT_STATUS_META: Record<GitChangeStatus, StatusMeta> = {
-  added: { label: 'A', className: 'text-[#4ADE80] bg-[#4ADE801A] border-[#4ADE8033]' },
-  modified: { label: 'M', className: 'text-[#F59E0B] bg-[#F59E0B1A] border-[#F59E0B33]' },
-  deleted: { label: 'D', className: 'text-[#EF4444] bg-[#EF44441A] border-[#EF444433]' },
-  renamed: { label: 'R', className: 'text-[#38BDF8] bg-[#38BDF81A] border-[#38BDF833]' },
-  copied: { label: 'C', className: 'text-[#38BDF8] bg-[#38BDF81A] border-[#38BDF833]' },
-  unmerged: { label: 'U', className: 'text-[#EF4444] bg-[#EF44441A] border-[#EF444433]' },
-  unknown: { label: '?', className: 'text-[#94A3B8] bg-[#94A3B81A] border-[#94A3B833]' },
+  added: { label: 'A', className: 'text-(--op-success) bg-(--op-success)/10 border-(--op-success)/20' },
+  modified: { label: 'M', className: 'text-(--op-warning) bg-(--op-warning)/10 border-(--op-warning)/20' },
+  deleted: { label: 'D', className: 'text-(--op-danger) bg-(--op-danger)/10 border-(--op-danger)/20' },
+  renamed: { label: 'R', className: 'text-(--op-accent-alt) bg-(--op-accent-alt)/10 border-(--op-accent-alt)/20' },
+  copied: { label: 'C', className: 'text-(--op-accent-alt) bg-(--op-accent-alt)/10 border-(--op-accent-alt)/20' },
+  unmerged: { label: 'U', className: 'text-(--op-danger) bg-(--op-danger)/10 border-(--op-danger)/20' },
+  unknown: { label: '?', className: 'text-(--op-text-secondary) bg-(--op-text-secondary)/10 border-(--op-text-secondary)/20' },
 };
 
 function getWorkingStatusMeta(entry: ParsedGitStatusLine, staged: boolean): StatusMeta {
@@ -81,14 +81,14 @@ const DiffLines: React.FC<{ diffText: string }> = ({ diffText }) => {
   const lines = useMemo(() => diffText.split('\n'), [diffText]);
 
   return (
-    <pre className="bg-[#090B0E] rounded border border-[#2D3139] p-3 text-[11px] font-mono leading-relaxed overflow-x-auto whitespace-pre">
+    <pre className="bg-(--op-bg-canvas) rounded border border-(--op-border) p-3 text-[11px] font-mono leading-relaxed overflow-x-auto whitespace-pre">
       {lines.map((line, i) => {
-        let cls = 'text-[#94A3B8]';
-        if (line.startsWith('+++') || line.startsWith('---')) cls = 'text-[#64748B]';
-        else if (line.startsWith('@@')) cls = 'text-[#38BDF8] font-semibold';
-        else if (line.startsWith('diff --git') || line.startsWith('index ')) cls = 'text-[#64748B]';
-        else if (line.startsWith('+')) cls = 'text-[#4ADE80] bg-[#4ADE800D]';
-        else if (line.startsWith('-')) cls = 'text-[#FCA5A5] bg-[#EF44440D]';
+        let cls = 'text-(--op-text-secondary)';
+        if (line.startsWith('+++') || line.startsWith('---')) cls = 'text-(--op-text-muted)';
+        else if (line.startsWith('@@')) cls = 'text-(--op-accent-alt) font-semibold';
+        else if (line.startsWith('diff --git') || line.startsWith('index ')) cls = 'text-(--op-text-muted)';
+        else if (line.startsWith('+')) cls = 'text-(--op-success) bg-(--op-success)/5';
+        else if (line.startsWith('-')) cls = 'text-(--op-danger) bg-(--op-danger)/5';
 
         return (
           <div key={i} className={`${cls} px-1 -mx-1`}>
@@ -344,18 +344,18 @@ export const GitModal: React.FC<GitModalProps> = ({
           onChange={(e) => setCommitMessage(e.target.value)}
           onKeyDown={handleCommitKeyDown}
           placeholder={t('git.commitPlaceholder')}
-          className="flex-1 bg-[#16191E] border border-[#2D3139] rounded px-3 py-1.5 text-xs text-white focus:border-[#3B82F6] outline-none"
+          className="flex-1 bg-(--op-bg-surface) border border-(--op-border) rounded px-3 py-1.5 text-xs text-white focus:border-(--op-accent) outline-none"
         />
         <button
           onClick={handleCommit}
           disabled={stagedEntries.length === 0 || !commitMessage.trim() || isCommitting}
-          className="px-4 py-1.5 rounded text-xs font-semibold flex items-center gap-2 bg-[#3B82F6] hover:bg-[#2563EB] text-white disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer shrink-0"
+          className="px-4 py-1.5 rounded text-xs font-semibold flex items-center gap-2 bg-(--op-accent) hover:bg-(--op-accent-strong) text-white disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer shrink-0"
         >
           {isCommitting ? <Loader2 className="w-4 h-4 animate-spin" /> : <GitCommitIcon className="w-4 h-4" />}
           {t('git.commitButton')}
         </button>
       </div>
-      <div className="flex items-center justify-between text-[10px] text-[#64748B] font-mono px-0.5">
+      <div className="flex items-center justify-between text-[10px] text-(--op-text-muted) font-mono px-0.5">
         <span className="truncate max-w-[220px]" title={`${authorName} <${authorEmail}>`}>
           {t('git.author')}: {authorName || 'Translator'}
         </span>
@@ -378,18 +378,18 @@ export const GitModal: React.FC<GitModalProps> = ({
     >
       {!folderPath ? (
         <div className="flex flex-col items-center justify-center p-8 text-center space-y-4">
-          <AlertTriangle className="w-10 h-10 text-[#F59E0B]" />
+          <AlertTriangle className="w-10 h-10 text-(--op-warning)" />
           <h4 className="text-base font-semibold text-white">{t('git.folderNotConnected')}</h4>
-          <p className="text-xs text-[#94A3B8]">{t('git.folderNotConnectedDesc')}</p>
+          <p className="text-xs text-(--op-text-secondary)">{t('git.folderNotConnectedDesc')}</p>
         </div>
       ) : !isInitialized ? (
         <div className="flex flex-col items-center justify-center p-8 text-center space-y-4">
-          <FolderGit2 className="w-10 h-10 text-[#3B82F6]" />
+          <FolderGit2 className="w-10 h-10 text-(--op-accent)" />
           <h4 className="text-base font-semibold text-white">{t('git.initTitle')}</h4>
           <button
             onClick={handleInit}
             disabled={isLoading}
-            className="px-5 py-2 rounded bg-[#3B82F6] hover:bg-[#2563EB] text-white text-xs font-semibold flex items-center gap-2 cursor-pointer disabled:opacity-50"
+            className="px-5 py-2 rounded bg-(--op-accent) hover:bg-(--op-accent-strong) text-white text-xs font-semibold flex items-center gap-2 cursor-pointer disabled:opacity-50"
           >
             {isLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <FolderGit2 className="w-4 h-4" />}
             {t('git.initRepo')}
@@ -398,19 +398,19 @@ export const GitModal: React.FC<GitModalProps> = ({
       ) : (
         <div className="flex flex-col h-[70vh]">
           {/* Toolbar */}
-          <div className="px-4 py-2 border-b border-[#2D3139] flex items-center justify-between shrink-0">
-            <div className="flex bg-[#090B0E] p-0.5 rounded border border-[#2D3139] text-xs">
+          <div className="px-4 py-2 border-b border-(--op-border) flex items-center justify-between shrink-0">
+            <div className="flex bg-(--op-bg-canvas) p-0.5 rounded border border-(--op-border) text-xs">
               <button
                 onClick={() => setActiveTab('status')}
                 className={`px-3 py-1 rounded flex items-center gap-1.5 cursor-pointer transition-all ${activeTab === 'status'
-                    ? 'bg-[#2D3748] text-white font-semibold shadow-xs'
-                    : 'text-[#94A3B8] hover:text-[#E2E8F0]'
+                    ? 'bg-(--op-bg-raised-hover) text-white font-semibold shadow-xs'
+                    : 'text-(--op-text-secondary) hover:text-(--op-text-primary)'
                   }`}
               >
                 <FolderGit2 className="w-3.5 h-3.5" />
                 <span>{t('git.changes')}</span>
                 {stagedEntries.length + unstagedEntries.length > 0 && (
-                  <span className="px-1.5 py-0.2 rounded-full bg-[#3B82F6] text-white text-[10px] font-mono font-bold">
+                  <span className="px-1.5 py-0.2 rounded-full bg-(--op-accent) text-white text-[10px] font-mono font-bold">
                     {stagedEntries.length + unstagedEntries.length}
                   </span>
                 )}
@@ -418,8 +418,8 @@ export const GitModal: React.FC<GitModalProps> = ({
               <button
                 onClick={() => setActiveTab('history')}
                 className={`px-3 py-1 rounded flex items-center gap-1.5 cursor-pointer transition-all ${activeTab === 'history'
-                    ? 'bg-[#2D3748] text-white font-semibold shadow-xs'
-                    : 'text-[#94A3B8] hover:text-[#E2E8F0]'
+                    ? 'bg-(--op-bg-raised-hover) text-white font-semibold shadow-xs'
+                    : 'text-(--op-text-secondary) hover:text-(--op-text-primary)'
                   }`}
               >
                 <History className="w-3.5 h-3.5" />
@@ -430,8 +430,8 @@ export const GitModal: React.FC<GitModalProps> = ({
             </div>
 
             <div className="flex items-center gap-2">
-              <span className="px-2 py-0.5 rounded bg-[#1C2128] text-[#38BDF8] border border-[#2D3139] font-mono text-[10px] flex items-center gap-1">
-                <span className="w-1.5 h-1.5 rounded-full bg-[#38BDF8]" />
+              <span className="px-2 py-0.5 rounded bg-(--op-bg-raised) text-(--op-accent-alt) border border-(--op-border) font-mono text-[10px] flex items-center gap-1">
+                <span className="w-1.5 h-1.5 rounded-full bg-(--op-accent-alt)" />
                 {branch}
               </span>
               <button
@@ -439,7 +439,7 @@ export const GitModal: React.FC<GitModalProps> = ({
                   refreshGitState();
                   if (activeTab === 'history') fetchLog();
                 }}
-                className="p-1.5 rounded text-[#64748B] hover:text-[#E2E8F0] hover:bg-[#1C2128] transition-colors cursor-pointer"
+                className="p-1.5 rounded text-(--op-text-muted) hover:text-(--op-text-primary) hover:bg-(--op-bg-raised) transition-colors cursor-pointer"
                 title={t('git.refresh')}
               >
                 <RefreshCw className={`w-3.5 h-3.5 ${isLoading ? 'animate-spin' : ''}`} />
@@ -450,16 +450,16 @@ export const GitModal: React.FC<GitModalProps> = ({
           {activeTab === 'status' ? (
             <div className="flex-1 flex overflow-hidden">
               {/* Left: staging list */}
-              <div className="w-72 border-r border-[#2D3139] bg-[#0E1116] flex flex-col shrink-0 overflow-hidden">
-                <div className="p-3 border-b border-[#2D3139] flex items-center justify-between bg-[#16191E]">
-                  <span className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider">
+              <div className="w-72 border-r border-(--op-border) bg-(--op-bg-inset) flex flex-col shrink-0 overflow-hidden">
+                <div className="p-3 border-b border-(--op-border) flex items-center justify-between bg-(--op-bg-surface)">
+                  <span className="text-[11px] font-semibold text-(--op-text-secondary) uppercase tracking-wider">
                     {t('git.sourceControl')}
                   </span>
                   <div className="flex items-center gap-1">
                     {unstagedEntries.length > 0 && (
                       <button
                         onClick={handleStageAll}
-                        className="px-2 py-0.5 rounded bg-[#1C2128] hover:bg-[#2D3748] text-[#38BDF8] text-[10px] font-medium border border-[#2D3139] transition-colors cursor-pointer flex items-center gap-1"
+                        className="px-2 py-0.5 rounded bg-(--op-bg-raised) hover:bg-(--op-bg-raised-hover) text-(--op-accent-alt) text-[10px] font-medium border border-(--op-border) transition-colors cursor-pointer flex items-center gap-1"
                         title={t('git.stageAll')}
                       >
                         <Plus className="w-3 h-3" />
@@ -469,7 +469,7 @@ export const GitModal: React.FC<GitModalProps> = ({
                     {stagedEntries.length > 0 && (
                       <button
                         onClick={handleUnstageAll}
-                        className="px-2 py-0.5 rounded bg-[#1C2128] hover:bg-[#2D3748] text-[#94A3B8] text-[10px] font-medium border border-[#2D3139] transition-colors cursor-pointer flex items-center gap-1"
+                        className="px-2 py-0.5 rounded bg-(--op-bg-raised) hover:bg-(--op-bg-raised-hover) text-(--op-text-secondary) text-[10px] font-medium border border-(--op-border) transition-colors cursor-pointer flex items-center gap-1"
                         title={t('git.unstageAll')}
                       >
                         <Minus className="w-3 h-3" />
@@ -480,7 +480,7 @@ export const GitModal: React.FC<GitModalProps> = ({
                 </div>
 
                 {successNotice && (
-                  <div className="m-2 p-2 rounded bg-[#4ADE801A] border border-[#4ADE8033] text-[#4ADE80] text-[11px] flex items-center gap-1.5">
+                  <div className="m-2 p-2 rounded bg-(--op-success)/10 border border-(--op-success)/20 text-(--op-success) text-[11px] flex items-center gap-1.5">
                     <CheckCircle2 className="w-3.5 h-3.5 shrink-0" />
                     <span>{t('git.commitSuccess')}</span>
                   </div>
@@ -489,11 +489,11 @@ export const GitModal: React.FC<GitModalProps> = ({
                 <div className="flex-1 overflow-y-auto p-2 space-y-3">
                   {/* Staged Changes */}
                   <div>
-                    <div className="px-2 py-1 text-[11px] font-semibold text-[#38BDF8]">
+                    <div className="px-2 py-1 text-[11px] font-semibold text-(--op-accent-alt)">
                       {t('git.stagedChanges')} ({stagedEntries.length})
                     </div>
                     {stagedEntries.length === 0 ? (
-                      <div className="px-2 py-2 text-[11px] text-[#64748B] italic">{t('git.noFilesStaged')}</div>
+                      <div className="px-2 py-2 text-[11px] text-(--op-text-muted) italic">{t('git.noFilesStaged')}</div>
                     ) : (
                       <div className="space-y-1">
                         {stagedEntries.map((entry) => {
@@ -503,7 +503,7 @@ export const GitModal: React.FC<GitModalProps> = ({
                             <div
                               key={`s:${entry.file}`}
                               onClick={() => setSelectedEntry({ file: entry.file, staged: true })}
-                              className={`flex items-center justify-between p-2 rounded text-xs cursor-pointer transition-colors ${isActive ? 'bg-[#1C2128] border border-[#3B82F6]' : 'hover:bg-[#16191E] border border-transparent'
+                              className={`flex items-center justify-between p-2 rounded text-xs cursor-pointer transition-colors ${isActive ? 'bg-(--op-bg-raised) border border-(--op-accent)' : 'hover:bg-(--op-bg-surface) border border-transparent'
                                 }`}
                             >
                               <div className="flex items-center gap-2 truncate">
@@ -520,7 +520,7 @@ export const GitModal: React.FC<GitModalProps> = ({
                                     e.stopPropagation();
                                     handleRevert(entry.file);
                                   }}
-                                  className="p-1 rounded text-[#94A3B8] hover:text-[#EF4444] hover:bg-[#EF44441A] transition-colors cursor-pointer"
+                                  className="p-1 rounded text-(--op-text-secondary) hover:text-(--op-danger) hover:bg-(--op-danger)/10 transition-colors cursor-pointer"
                                   title={t('git.revertTooltip')}
                                 >
                                   <RotateCcw className="w-3 h-3" />
@@ -530,7 +530,7 @@ export const GitModal: React.FC<GitModalProps> = ({
                                     e.stopPropagation();
                                     handleUnstage(entry.file);
                                   }}
-                                  className="p-1 rounded text-[#94A3B8] hover:text-white hover:bg-[#2D3139] transition-colors cursor-pointer"
+                                  className="p-1 rounded text-(--op-text-secondary) hover:text-white hover:bg-(--op-border) transition-colors cursor-pointer"
                                   title={t('git.unstageFile')}
                                 >
                                   <Minus className="w-3 h-3" />
@@ -545,7 +545,7 @@ export const GitModal: React.FC<GitModalProps> = ({
 
                   {/* Unstaged Changes */}
                   <div>
-                    <div className="px-2 py-1 text-[11px] font-semibold text-[#F59E0B]">
+                    <div className="px-2 py-1 text-[11px] font-semibold text-(--op-warning)">
                       {t('git.unstagedChanges')} ({unstagedEntries.length})
                     </div>
                     {unstagedEntries.length === 0 ? (
@@ -559,14 +559,14 @@ export const GitModal: React.FC<GitModalProps> = ({
                             <div
                               key={`u:${entry.file}`}
                               onClick={() => setSelectedEntry({ file: entry.file, staged: false })}
-                              className={`flex items-center justify-between p-2 rounded text-xs cursor-pointer transition-colors ${isActive ? 'bg-[#1C2128] border border-[#3B82F6]' : 'hover:bg-[#16191E] border border-transparent'
+                              className={`flex items-center justify-between p-2 rounded text-xs cursor-pointer transition-colors ${isActive ? 'bg-(--op-bg-raised) border border-(--op-accent)' : 'hover:bg-(--op-bg-surface) border border-transparent'
                                 }`}
                             >
                               <div className="flex items-center gap-2 truncate">
                                 <span className={`shrink-0 font-mono text-[10px] font-bold w-4 h-4 flex items-center justify-center rounded border ${meta.className}`}>
                                   {meta.label}
                                 </span>
-                                <span className="font-mono text-[#94A3B8] truncate text-[11px]" title={entry.file}>
+                                <span className="font-mono text-(--op-text-secondary) truncate text-[11px]" title={entry.file}>
                                   {entry.file}
                                 </span>
                               </div>
@@ -576,7 +576,7 @@ export const GitModal: React.FC<GitModalProps> = ({
                                     e.stopPropagation();
                                     handleRevert(entry.file);
                                   }}
-                                  className="p-1 rounded text-[#94A3B8] hover:text-[#EF4444] hover:bg-[#EF44441A] transition-colors cursor-pointer"
+                                  className="p-1 rounded text-(--op-text-secondary) hover:text-(--op-danger) hover:bg-(--op-danger)/10 transition-colors cursor-pointer"
                                   title={t('git.revertTooltip')}
                                 >
                                   <RotateCcw className="w-3 h-3" />
@@ -586,7 +586,7 @@ export const GitModal: React.FC<GitModalProps> = ({
                                     e.stopPropagation();
                                     handleStage(entry.file);
                                   }}
-                                  className="p-1 rounded text-[#4ADE80] hover:bg-[#4ADE801A] transition-colors cursor-pointer"
+                                  className="p-1 rounded text-(--op-success) hover:bg-(--op-success)/10 transition-colors cursor-pointer"
                                   title={t('git.stageFile')}
                                 >
                                   <Plus className="w-3 h-3" />
@@ -602,10 +602,10 @@ export const GitModal: React.FC<GitModalProps> = ({
               </div>
 
               {/* Right: diff viewer */}
-              <div className="flex-1 flex flex-col bg-[#090B0E] overflow-hidden">
-                <div className="px-4 py-2.5 border-b border-[#2D3139] bg-[#16191E] flex items-center justify-between shrink-0">
+              <div className="flex-1 flex flex-col bg-(--op-bg-canvas) overflow-hidden">
+                <div className="px-4 py-2.5 border-b border-(--op-border) bg-(--op-bg-surface) flex items-center justify-between shrink-0">
                   <div className="flex items-center gap-2 min-w-0">
-                    <FileDiff className="w-4 h-4 text-[#38BDF8] shrink-0" />
+                    <FileDiff className="w-4 h-4 text-(--op-accent-alt) shrink-0" />
                     <span className="text-xs font-semibold text-white font-mono truncate">
                       {selectedEntry?.file || t('git.selectFileDiff')}
                     </span>
@@ -614,8 +614,8 @@ export const GitModal: React.FC<GitModalProps> = ({
                     <div className="flex items-center gap-2 shrink-0">
                       <span
                         className={`text-[10px] px-1.5 py-0.5 rounded font-mono ${selectedEntry.staged
-                            ? 'bg-[#38BDF81A] text-[#38BDF8] border border-[#38BDF833]'
-                            : 'bg-[#F59E0B1A] text-[#F59E0B] border border-[#F59E0B33]'
+                            ? 'bg-(--op-accent-alt)/10 text-(--op-accent-alt) border border-(--op-accent-alt)/20'
+                            : 'bg-(--op-warning)/10 text-(--op-warning) border border-(--op-warning)/20'
                           }`}
                       >
                         {selectedEntry.staged ? t('git.stagedBadge') : t('git.workingTreeBadge')}
@@ -623,7 +623,7 @@ export const GitModal: React.FC<GitModalProps> = ({
                       <button
                         onClick={() => handleRevert(selectedEntry.file)}
                         disabled={isLoading}
-                        className="px-2 py-0.5 rounded bg-[#EF44441A] hover:bg-[#EF444433] text-[#EF4444] border border-[#EF444433] text-[10px] font-medium transition-colors cursor-pointer flex items-center gap-1 disabled:opacity-50"
+                        className="px-2 py-0.5 rounded bg-(--op-danger)/10 hover:bg-(--op-danger)/20 text-(--op-danger) border border-(--op-danger)/20 text-[10px] font-medium transition-colors cursor-pointer flex items-center gap-1 disabled:opacity-50"
                         title={t('git.revertSelectedTooltip')}
                       >
                         <RotateCcw className="w-3 h-3" />
@@ -635,18 +635,18 @@ export const GitModal: React.FC<GitModalProps> = ({
 
                 <div className="flex-1 overflow-y-auto p-4">
                   {!selectedEntry ? (
-                    <div className="h-full flex items-center justify-center text-[#64748B] text-xs">
+                    <div className="h-full flex items-center justify-center text-(--op-text-muted) text-xs">
                       {t('git.selectLeftDiff')}
                     </div>
                   ) : workingDiffLoading ? (
-                    <div className="h-full flex items-center justify-center text-[#64748B] text-xs gap-2">
+                    <div className="h-full flex items-center justify-center text-(--op-text-muted) text-xs gap-2">
                       <Loader2 className="w-4 h-4 animate-spin" />
                       {t('common.loading')}
                     </div>
                   ) : workingDiff ? (
                     <DiffLines diffText={workingDiff} />
                   ) : (
-                    <div className="h-full flex flex-col items-center justify-center text-center gap-2 text-[#64748B] text-xs px-8">
+                    <div className="h-full flex flex-col items-center justify-center text-center gap-2 text-(--op-text-muted) text-xs px-8">
                       <span>{t('git.noDiffHead')}</span>
                       {!selectedEntry.staged && (
                         <span className="text-[11px]">{t('git.matchSnapshot')}</span>
@@ -659,67 +659,67 @@ export const GitModal: React.FC<GitModalProps> = ({
           ) : (
             <div className="flex-1 flex overflow-hidden">
               {/* Commit History tab */}
-              <div className="w-80 border-r border-[#2D3139] bg-[#0E1116] flex flex-col shrink-0 overflow-y-auto p-2 space-y-1.5">
+              <div className="w-80 border-r border-(--op-border) bg-(--op-bg-inset) flex flex-col shrink-0 overflow-y-auto p-2 space-y-1.5">
                 {logLoading ? (
-                  <div className="h-full flex items-center justify-center text-[#64748B] text-xs gap-2 py-8">
+                  <div className="h-full flex items-center justify-center text-(--op-text-muted) text-xs gap-2 py-8">
                     <Loader2 className="w-4 h-4 animate-spin" />
                   </div>
                 ) : gitLog.length === 0 ? (
-                  <div className="px-2 py-8 text-center text-[11px] text-[#64748B] italic">{t('git.noCommitsYet')}</div>
+                  <div className="px-2 py-8 text-center text-[11px] text-(--op-text-muted) italic">{t('git.noCommitsYet')}</div>
                 ) : (
                   gitLog.map((commit, idx) => (
                     <div
                       key={commit.hash}
                       onClick={() => setSelectedCommitHash(commit.hash)}
                       className={`p-3 rounded-lg border text-xs cursor-pointer transition-all space-y-1.5 ${selectedCommitHash === commit.hash
-                          ? 'bg-[#1C2128] border-[#3B82F6]'
-                          : 'bg-[#16191E] border-[#2D3139] hover:border-[#3B82F666]'
+                          ? 'bg-(--op-bg-raised) border-(--op-accent)'
+                          : 'bg-(--op-bg-surface) border-(--op-border) hover:border-(--op-accent)/40'
                         }`}
                     >
                       <div className="flex items-center justify-between">
-                        <span className="font-mono text-[#38BDF8] text-[11px] font-bold flex items-center gap-1">
+                        <span className="font-mono text-(--op-accent-alt) text-[11px] font-bold flex items-center gap-1">
                           <Hash className="w-3 h-3" />
                           {commit.shortHash}
                           {idx === 0 && (
-                            <span className="ml-1 px-1 py-0.2 rounded bg-[#3B82F6] text-white text-[9px]">HEAD</span>
+                            <span className="ml-1 px-1 py-0.2 rounded bg-(--op-accent) text-white text-[9px]">HEAD</span>
                           )}
                         </span>
-                        <span className="text-[10px] text-[#64748B]">{new Date(commit.date).toLocaleDateString()}</span>
+                        <span className="text-[10px] text-(--op-text-muted)">{new Date(commit.date).toLocaleDateString()}</span>
                       </div>
                       <div className="text-white font-medium line-clamp-2 text-xs">{commit.subject}</div>
-                      <div className="text-[10px] text-[#64748B] truncate">{commit.authorName}</div>
+                      <div className="text-[10px] text-(--op-text-muted) truncate">{commit.authorName}</div>
                     </div>
                   ))
                 )}
               </div>
 
-              <div className="flex-1 flex flex-col bg-[#090B0E] overflow-hidden">
+              <div className="flex-1 flex flex-col bg-(--op-bg-canvas) overflow-hidden">
                 {!selectedCommitHash ? (
-                  <div className="h-full flex items-center justify-center text-[#64748B] text-xs">
+                  <div className="h-full flex items-center justify-center text-(--op-text-muted) text-xs">
                     {t('git.selectCommitLeft')}
                   </div>
                 ) : selectedCommitFile ? (
                   <div className="flex-1 flex flex-col overflow-hidden">
-                    <div className="px-4 py-2.5 border-b border-[#2D3139] bg-[#16191E] flex items-center gap-2 shrink-0">
+                    <div className="px-4 py-2.5 border-b border-(--op-border) bg-(--op-bg-surface) flex items-center gap-2 shrink-0">
                       <button
                         onClick={() => setSelectedCommitFile(null)}
-                        className="p-1 rounded text-[#94A3B8] hover:text-white hover:bg-[#1C2128] cursor-pointer"
+                        className="p-1 rounded text-(--op-text-secondary) hover:text-white hover:bg-(--op-bg-raised) cursor-pointer"
                       >
                         <ChevronLeft className="w-4 h-4" />
                       </button>
-                      <FileDiff className="w-4 h-4 text-[#38BDF8]" />
+                      <FileDiff className="w-4 h-4 text-(--op-accent-alt)" />
                       <span className="text-xs font-semibold text-white font-mono truncate">{selectedCommitFile}</span>
                     </div>
                     <div className="flex-1 overflow-y-auto p-4">
                       {commitDiffLoading ? (
-                        <div className="h-full flex items-center justify-center text-[#64748B] text-xs gap-2">
+                        <div className="h-full flex items-center justify-center text-(--op-text-muted) text-xs gap-2">
                           <Loader2 className="w-4 h-4 animate-spin" />
                           {t('common.loading')}
                         </div>
                       ) : commitDiff ? (
                         <DiffLines diffText={commitDiff} />
                       ) : (
-                        <div className="h-full flex items-center justify-center text-[#64748B] text-xs">
+                        <div className="h-full flex items-center justify-center text-(--op-text-muted) text-xs">
                           {t('git.noWorkingDiff')}
                         </div>
                       )}
@@ -731,32 +731,32 @@ export const GitModal: React.FC<GitModalProps> = ({
                       const commit = gitLog.find((c) => c.hash === selectedCommitHash);
                       if (!commit) return null;
                       return (
-                        <div className="p-4 border-b border-[#2D3139] bg-[#16191E] space-y-2 shrink-0">
+                        <div className="p-4 border-b border-(--op-border) bg-(--op-bg-surface) space-y-2 shrink-0">
                           <h4 className="text-sm font-semibold text-white">{commit.subject}</h4>
-                          <div className="flex items-center gap-3 text-xs text-[#94A3B8] font-mono flex-wrap">
+                          <div className="flex items-center gap-3 text-xs text-(--op-text-secondary) font-mono flex-wrap">
                             <span className="flex items-center gap-1">
-                              <User className="w-3 h-3 text-[#3B82F6]" />
+                              <User className="w-3 h-3 text-(--op-accent)" />
                               {commit.authorName} &lt;{commit.authorEmail}&gt;
                             </span>
                             <span className="flex items-center gap-1">
-                              <Clock className="w-3 h-3 text-[#64748B]" />
+                              <Clock className="w-3 h-3 text-(--op-text-muted)" />
                               {new Date(commit.date).toLocaleString()}
                             </span>
                           </div>
-                          <div className="text-[11px] font-mono text-[#64748B]">
-                            {t('git.fullHash')}: <span className="text-[#94A3B8]">{commit.hash}</span>
+                          <div className="text-[11px] font-mono text-(--op-text-muted)">
+                            {t('git.fullHash')}: <span className="text-(--op-text-secondary)">{commit.hash}</span>
                           </div>
                         </div>
                       );
                     })()}
 
                     <div className="flex-1 overflow-y-auto p-4 space-y-2">
-                      <div className="text-xs font-semibold text-[#94A3B8]">
+                      <div className="text-xs font-semibold text-(--op-text-secondary)">
                         {t('git.changedFilesInCommit')} ({commitFiles.length}):
                       </div>
 
                       {commitFilesLoading ? (
-                        <div className="flex items-center justify-center text-[#64748B] text-xs gap-2 py-8">
+                        <div className="flex items-center justify-center text-(--op-text-muted) text-xs gap-2 py-8">
                           <Loader2 className="w-4 h-4 animate-spin" />
                         </div>
                       ) : (
@@ -766,7 +766,7 @@ export const GitModal: React.FC<GitModalProps> = ({
                             <div
                               key={file.filename}
                               onClick={() => setSelectedCommitFile(file.filename)}
-                              className="bg-[#16191E] border border-[#2D3139] hover:border-[#3B82F666] p-3 rounded-lg flex items-center justify-between text-xs font-mono cursor-pointer transition-colors"
+                              className="bg-(--op-bg-surface) border border-(--op-border) hover:border-(--op-accent)/40 p-3 rounded-lg flex items-center justify-between text-xs font-mono cursor-pointer transition-colors"
                             >
                               <div className="flex items-center gap-2 min-w-0">
                                 <span className={`shrink-0 font-mono text-[10px] font-bold w-4 h-4 flex items-center justify-center rounded border ${meta.className}`}>
@@ -777,8 +777,8 @@ export const GitModal: React.FC<GitModalProps> = ({
                                 </span>
                               </div>
                               <div className="flex items-center gap-2 text-[11px] shrink-0">
-                                {file.additions > 0 && <span className="text-[#4ADE80]">+{file.additions}</span>}
-                                {file.deletions > 0 && <span className="text-[#EF4444]">-{file.deletions}</span>}
+                                {file.additions > 0 && <span className="text-(--op-success)">+{file.additions}</span>}
+                                {file.deletions > 0 && <span className="text-(--op-danger)">-{file.deletions}</span>}
                               </div>
                             </div>
                           );
