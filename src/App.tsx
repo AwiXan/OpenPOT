@@ -6,7 +6,7 @@
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { Workspace, FilterStatus, LintIssue, AppSettings, PoFileRecord, PoEntry } from './types/gettext';
 import { INITIAL_SAMPLE_WORKSPACES } from './lib/sampleWorkspaces';
-import { serializePoFile, parsePoContent } from './lib/poParser';
+import { serializePoFile, parsePoContent, linkPoEntriesToPot } from './lib/poParser';
 import { compileMoBinary } from './lib/moCompiler';
 import { getPluralRuleForLanguage } from './lib/pluralEngine';
 import { lintEntry } from './lib/linter';
@@ -391,6 +391,12 @@ export default function App() {
           if (w.id !== activeWorkspaceId) return w;
 
           if (filename.endsWith('.pot') || filename === w.potFile.filename) {
+            // Re-link every PO file's entries to the reverted POT so ids stay
+            // shared across the whole workspace instead of drifting apart.
+            const revertedPoFiles = w.poFiles.map((po) => ({
+              ...po,
+              entries: linkPoEntriesToPot(parsed.entries, po.entries),
+            }));
             return {
               ...w,
               potFile: {
@@ -399,6 +405,7 @@ export default function App() {
                 entries: parsed.entries,
                 isModified: false,
               },
+              poFiles: revertedPoFiles,
             };
           }
 
@@ -407,7 +414,7 @@ export default function App() {
               return {
                 ...po,
                 header: parsed.header,
-                entries: parsed.entries,
+                entries: linkPoEntriesToPot(w.potFile.entries, parsed.entries),
                 isModified: false,
               };
             }
@@ -662,8 +669,16 @@ export default function App() {
             isPotTemplate={isPotActive}
             onRenameEntry={(entryId, newMsgid) => {
               const target = activeEntries.find((e) => e.id === entryId);
-              if (target) {
-                handleSyncPotEntry({ ...target, msgid: newMsgid });
+              if (!target) return;
+              // Renaming can be triggered from a PO file's row too, whose entry
+              // id may not match the POT's - resolve the real POT entry first
+              // so the rename always reaches every linked translation file.
+              const potEntry = currentWorkspace.potFile.entries.find((e) => e.id === target.id)
+                || currentWorkspace.potFile.entries.find(
+                  (e) => e.msgid === target.msgid && (e.msgctxt || '') === (target.msgctxt || '')
+                );
+              if (potEntry) {
+                handleSyncPotEntry({ ...potEntry, msgid: newMsgid });
               }
             }}
           />

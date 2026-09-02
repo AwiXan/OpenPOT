@@ -352,7 +352,7 @@ export function useWorkspaceActions(
           const requiredForms = updatedPotEntry.msgidPlural ? rule.nplurals : 1;
           const msgstr = Array.from({ length: requiredForms }, (_, index) => existingPoEntry.msgstr[index] || '');
           const syncedEntry: PoEntry = { ...existingPoEntry, msgid: updatedPotEntry.msgid, msgidPlural: updatedPotEntry.msgidPlural, msgctxt: updatedPotEntry.msgctxt, comments: updatedPotEntry.comments, references: updatedPotEntry.references, msgstr };
-          return { ...po, entries: po.entries.map((e) => (e.id === updatedPotEntry.id ? syncedEntry : e)), isModified: true };
+          return { ...po, entries: po.entries.map((e) => (e.id === existingPoEntry.id ? syncedEntry : e)), isModified: true };
         });
         return { ...w, potFile: { ...w.potFile, entries: updatedPotEntries, isModified: true }, poFiles: updatedPoFiles, isModified: true };
       })

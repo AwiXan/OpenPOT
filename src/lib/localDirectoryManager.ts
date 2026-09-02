@@ -1,5 +1,5 @@
 import { Workspace, PotFileRecord, PoFileRecord, PoNamingScheme } from '../types/gettext';
-import { parsePoContent, serializePoFile } from './poParser';
+import { parsePoContent, serializePoFile, linkPoEntriesToPot } from './poParser';
 import { compileMoBinary } from './moCompiler';
 import { COMMON_PLURAL_RULES } from './pluralEngine';
 import { initGitRepository } from './gitEngine';
@@ -173,7 +173,7 @@ export function buildWorkspacesFromFiles(
         language: langCode,
         languageName: langName,
         header: parsed.header,
-        entries: parsed.entries,
+        entries: linkPoEntriesToPot(potRecord.entries, parsed.entries),
         localFileHandle: poFile.handle,
         isModified: false,
       };

@@ -3,7 +3,7 @@ import JSZip from 'jszip';
 import { Workspace, PoFileRecord, PotFileRecord, LocalDirectoryState, AppSettings } from '../types/gettext';
 import { getPluralRuleForLanguage } from '../lib/pluralEngine';
 import { scanFileList, savePoAndMoToDirectory, saveWorkspaceToDirectory, formatPoFilename, formatMoFilename } from '../lib/localDirectoryManager';
-import { parsePoContent, serializePoFile } from '../lib/poParser';
+import { parsePoContent, serializePoFile, linkPoEntriesToPot } from '../lib/poParser';
 import { compileMoBinary } from '../lib/moCompiler';
 import { pickNativeDirectory, pickNativeFile, readNativeEncodedTextFile, scanNativeDirectoryFiles, writeNativeTextFile, writeNativeBinaryFile } from '../lib/nativeFS';
 import { initGitRepository } from '../lib/gitEngine';
@@ -90,7 +90,7 @@ export function useFileSystemSync(
           language: langCode,
           languageName: langCode.toUpperCase(),
           header: parsed.header,
-          entries: parsed.entries,
+          entries: linkPoEntriesToPot(potRecord.entries, parsed.entries),
         };
       });
 
@@ -367,7 +367,7 @@ export function useFileSystemSync(
       } else {
         const language = parsed.header.language || 'und';
         const po: PoFileRecord = { id: `po_${Date.now()}`, filename: filePath.split(/[\\/]/).pop() || `${language}.po`, language, languageName: language.toUpperCase(), header: parsed.header, entries: parsed.entries };
-        setWorkspaces((prev) => prev.map((workspace) => workspace.id === activeWorkspaceId ? { ...workspace, poFiles: [...workspace.poFiles, po], activeFileId: po.id, isModified: true } : workspace));
+        setWorkspaces((prev) => prev.map((workspace) => workspace.id === activeWorkspaceId ? { ...workspace, poFiles: [...workspace.poFiles, { ...po, entries: linkPoEntriesToPot(workspace.potFile.entries, po.entries) }], activeFileId: po.id, isModified: true } : workspace));
       }
     } else {
       const entriesByLanguage = extension === 'csv'
@@ -504,7 +504,7 @@ export function useFileSystemSync(
         setWorkspaces((prev) =>
           prev.map((w) =>
             w.id === activeWorkspaceId
-              ? { ...w, poFiles: [...w.poFiles, newPo], activeFileId: newPo.id, isModified: true }
+              ? { ...w, poFiles: [...w.poFiles, { ...newPo, entries: linkPoEntriesToPot(w.potFile.entries, newPo.entries) }], activeFileId: newPo.id, isModified: true }
               : w
           )
         );
