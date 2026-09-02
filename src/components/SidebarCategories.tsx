@@ -338,7 +338,7 @@ export const SidebarCategories: React.FC<SidebarCategoriesProps> = ({
             paddingLeft: `${node.level * 16 + 8}px`,
             WebkitUserDrag: 'element',
             userSelect: 'none',
-          }}
+          } as any}
           onDragStart={(e) => {
             e.stopPropagation();
             setDraggedCategoryPath(node.fullPath);

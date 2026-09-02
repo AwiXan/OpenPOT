@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import JSZip from 'jszip';
 import { Workspace, PoFileRecord, PotFileRecord, LocalDirectoryState, AppSettings } from '../types/gettext';
+import { getPluralRuleForLanguage } from '../lib/pluralEngine';
 import { scanFileList, savePoAndMoToDirectory, saveWorkspaceToDirectory, formatPoFilename, formatMoFilename } from '../lib/localDirectoryManager';
 import { parsePoContent, serializePoFile } from '../lib/poParser';
 import { compileMoBinary } from '../lib/moCompiler';
@@ -102,11 +103,9 @@ export function useFileSystemSync(
         activeFileId: poRecords[0]?.id || 'pot',
         activeEntryId: potRecord.entries[0]?.id || null,
         createdAt: new Date().toISOString(),
-        // BOUND FOLDER STRICTLY TO THIS WORKSPACE:
         localDirPath: dirPath,
       };
 
-      // APPEND to existing workspaces instead of overwriting them!
       setWorkspaces((prev) => [...prev, loadedWorkspace]);
       setActiveWorkspaceId(loadedWorkspace.id);
 
@@ -143,14 +142,12 @@ export function useFileSystemSync(
         return;
       }
 
-      // Bind web folder handle to all loaded workspaces
       const newWorkspaces = result.workspaces.map(w => ({
         ...w,
         localDirPath: result.dirName,
         localDirHandle: result.dirHandle
       }));
 
-      // Append them!
       setWorkspaces((prev) => [...prev, ...newWorkspaces]);
       setActiveWorkspaceId(newWorkspaces[0].id);
 
@@ -163,7 +160,6 @@ export function useFileSystemSync(
     e.target.value = '';
   };
 
-  // 2. DISCONNECT ONLY FROM THE CURRENT WORKSPACE
   const handleDisconnectLocalFolder = () => {
     setWorkspaces((prev) =>
       prev.map((w) =>
@@ -175,7 +171,6 @@ export function useFileSystemSync(
     showToast('Local folder disconnected from this workspace.', 'info');
   };
 
-  // 3. TARGETED DISK SYNC
   const handleSyncLocalFolder = async () => {
     if (!currentWorkspace) return;
 
@@ -194,9 +189,16 @@ export function useFileSystemSync(
         let savedMo = 0;
         const cleanDir = dirPath.replace(/\\/g, '/');
 
+        // 1. ИСПРАВЛЕНИЕ: Обязательно сохраняем POT-файл (шаблон)
+        const potFilename = currentWorkspace.potFile.filename || `${domain}.pot`;
+        const potContent = serializePoFile(currentWorkspace.potFile.header, currentWorkspace.potFile.entries, true);
+        await writeNativeTextFile(`${cleanDir}/${potFilename}`, potContent);
+        savedPo++;
+
+        // 2. ИСПРАВЛЕНИЕ: Сохраняем языковые PO-файлы БЕЗ принудительной авто-категоризации
         for (const po of currentWorkspace.poFiles) {
           const poFilename = po.filename || formatPoFilename(domain, po.language, settings.poNamingScheme);
-          const poContent = serializePoFile(po.header, po.entries, false, settings.autoGenerateCategories ?? true, po.language);
+          const poContent = serializePoFile(po.header, po.entries, false);
           const fullPoPath = `${cleanDir}/${poFilename}`;
 
           await writeNativeTextFile(fullPoPath, poContent);
@@ -241,7 +243,7 @@ export function useFileSystemSync(
           currentWorkspace,
           settings.autoCompileMoOnSave ?? true,
           settings.poNamingScheme || 'domain_lang',
-          settings.autoGenerateCategories ?? true
+          false // 3. ИСПРАВЛЕНИЕ: Отключаем перезапись категорий для Web API
         );
 
         if (settings.autoCompileJsonOnSave || settings.autoCompileCsvOnSave) {
@@ -260,7 +262,7 @@ export function useFileSystemSync(
           prev.map((w) => (w.id === activeWorkspaceId ? { ...w, isModified: false } : w))
         );
 
-        showToast(`Synced ${summary.savedPoCount} .po files and compiled ${summary.savedMoCount} .mo binaries directly to disk at ${summary.timestamp}!`, 'success');
+        showToast(`Synced ${summary.savedPoCount} .po files and compiled ${summary.savedMoCount} .mo binaries directly to disk!`, 'success');
       } catch (err: any) {
         console.error('Failed to sync to local directory:', err);
         showToast(`Disk sync failed: ${err.message}`, 'warning');
@@ -274,13 +276,25 @@ export function useFileSystemSync(
     if (!destination) return;
     const domain = currentWorkspace.domainName || currentWorkspace.name || 'messages';
     const safeName = domain.replace(/[^a-zA-Z0-9_-]/g, '_');
+    
     if (format === 'gettext') {
       const zip = new JSZip();
       const folder = zip.folder(safeName) || zip;
-          folder.file(currentWorkspace.potFile.filename || `${domain}.pot`, serializePoFile(poRecord.header, poRecord.entries, false, settings.autoGenerateCategories ?? true, poRecord.language));
+      
+      folder.file(
+        currentWorkspace.potFile.filename || `${domain}.pot`,
+        serializePoFile(currentWorkspace.potFile.header, currentWorkspace.potFile.entries, true)
+      );
+      
       currentWorkspace.poFiles.forEach((po) => {
-        folder.file(po.filename || formatPoFilename(domain, po.language, settings.poNamingScheme), serializePoFile(poRecord.header, poRecord.entries, false, settings.autoGenerateCategories ?? true, poRecord.language));
-        folder.file(formatMoFilename(domain, po.language, settings.poNamingScheme), compileMoBinary(po.header, po.entries));
+        folder.file(
+          po.filename || formatPoFilename(domain, po.language, settings.poNamingScheme),
+          serializePoFile(po.header, po.entries, false)
+        );
+        folder.file(
+          formatMoFilename(domain, po.language, settings.poNamingScheme),
+          compileMoBinary(po.header, po.entries)
+        );
       });
       await writeNativeBinaryFile(`${destination}/${safeName}.zip`, await zip.generateAsync({ type: 'uint8array' }));
     } else {
@@ -376,7 +390,7 @@ export function useFileSystemSync(
         try {
           const domain = currentWorkspace.domainName || 'messages';
           const poFilename = poRecord.filename || formatPoFilename(domain, poRecord.language, settings.poNamingScheme);
-          const poContent = serializePoFile(poRecord.header, poRecord.entries, false, settings.autoGenerateCategories ?? true, poRecord.language);
+          const poContent = serializePoFile(poRecord.header, poRecord.entries, false);
           const cleanDir = dirPath.replace(/\\/g, '/');
           const fullPoPath = `${cleanDir}/${poFilename}`;
 
@@ -412,7 +426,7 @@ export function useFileSystemSync(
             settings.autoCompileMoOnSave ?? true,
             domain,
             settings.poNamingScheme || 'domain_lang',
-            settings.autoGenerateCategories ?? true
+            false // 4. ИСПРАВЛЕНИЕ: Отключаем перезапись категорий
           );
           if (settings.autoCompileJsonOnSave || settings.autoCompileCsvOnSave) {
             const writeDirectoryText = async (filename: string, content: string) => {
@@ -435,10 +449,6 @@ export function useFileSystemSync(
 
   const handleImportFile = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
-    header.language = langCode;
-        if (!header.pluralForms) {
-          header.pluralForms = getPluralRuleForLanguage(langCode).formula;
-        }
 
     if (!files || files.length === 0) return;
 
@@ -476,6 +486,12 @@ export function useFileSystemSync(
         setActiveWorkspaceId(newWs.id);
       } else {
         const langCode = header.language || filename.replace(/\.po$/, '');
+        
+        header.language = langCode;
+        if (!header.pluralForms) {
+          header.pluralForms = getPluralRuleForLanguage(langCode).formula;
+        }
+
         const newPo: PoFileRecord = {
           id: `po_${langCode}_${Date.now()}`,
           filename,
