@@ -66,6 +66,7 @@ export interface Workspace {
   customCategories?: string[];
   localDirPath?: string;
   localDirHandle?: any;
+  diskFileHashes?: Record<string, string>;
 }
 
 export type FilterStatus = 'all' | 'untranslated' | 'fuzzy' | 'translated' | 'issues' | 'plurals';

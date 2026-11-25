@@ -14,6 +14,7 @@ import {
   GitBranch,
   Settings,
   FolderSync,
+  FolderDown,
   RefreshCw,
   Unlink,
   Check,
@@ -40,6 +41,7 @@ interface TopHeaderProps {
   onOpenLocalFolder: () => void;
   localDirState: LocalDirectoryState;
   onSyncLocalFolder: () => void;
+  onSyncFromFolder: () => void | Promise<void>;
   onDisconnectLocalFolder: () => void;
   viewMode: 'editor' | 'matrix';
   setViewMode: (mode: 'editor' | 'matrix') => void;
@@ -71,6 +73,7 @@ export const TopHeader: React.FC<TopHeaderProps> = ({
   onOpenLocalFolder,
   localDirState,
   onSyncLocalFolder,
+  onSyncFromFolder,
   onDisconnectLocalFolder,
   viewMode,
   setViewMode,
@@ -89,6 +92,7 @@ export const TopHeader: React.FC<TopHeaderProps> = ({
   const [activeMenu, setActiveMenu] = useState<MenuKey>(null);
   const menuBarRef = useRef<HTMLDivElement>(null);
   const [isSyncing, setIsSyncing] = useState(false);
+  const [isFetching, setIsFetching] = useState(false);
   const [canScrollLeft, setCanScrollLeft] = useState(false);
   const [canScrollRight, setCanScrollRight] = useState(false);
 
@@ -147,8 +151,20 @@ export const TopHeader: React.FC<TopHeaderProps> = ({
 
   const handleManualSync = async () => {
     setIsSyncing(true);
-    await onSyncLocalFolder();
-    setTimeout(() => setIsSyncing(false), 500);
+    try {
+      await onSyncLocalFolder();
+    } finally {
+      setTimeout(() => setIsSyncing(false), 500);
+    }
+  };
+
+  const handleFetchFromFolder = async () => {
+    setIsFetching(true);
+    try {
+      await onSyncFromFolder();
+    } finally {
+      setTimeout(() => setIsFetching(false), 400);
+    }
   };
 
   const handleMenuToggle = (menu: MenuKey) => {
@@ -286,6 +302,21 @@ export const TopHeader: React.FC<TopHeaderProps> = ({
                   </button>
 
                   <div className="border-t border-(--op-border) my-1" />
+
+                  {localDirState.isConnected && (
+                    <button
+                      onClick={() => {
+                        handleFetchFromFolder();
+                        setActiveMenu(null);
+                      }}
+                      className="w-full px-3 py-1.5 flex items-center justify-between text-left text-(--op-text-primary) hover:bg-(--op-bg-active) hover:text-(--op-accent-alt) transition-colors cursor-pointer"
+                    >
+                      <div className="flex items-center gap-2">
+                        <FolderDown className="w-4 h-4 text-(--op-success)" />
+                        <span>{t('menu.syncFromFolder')}</span>
+                      </div>
+                    </button>
+                  )}
 
                   <button
                     onClick={() => {
@@ -678,9 +709,18 @@ export const TopHeader: React.FC<TopHeaderProps> = ({
                 {localDirState.autoCompileMo ? '(Auto .MO)' : '(Disk Sync)'}
               </span>
               <button
-                onClick={handleManualSync}
+                onClick={handleFetchFromFolder}
+                disabled={isFetching}
                 className="hover:text-white p-0.5 rounded transition-colors cursor-pointer"
-                title="Force Sync & Compile .MO to Disk"
+                title={t('header.syncFromFolderTooltip')}
+              >
+                <FolderDown className={`w-3 h-3 ${isFetching ? 'animate-pulse' : ''}`} />
+              </button>
+              <button
+                onClick={handleManualSync}
+                disabled={isSyncing}
+                className="hover:text-white p-0.5 rounded transition-colors cursor-pointer"
+                title={t('header.forceSyncTooltip')}
               >
                 <RefreshCw className={`w-3 h-3 ${isSyncing ? 'animate-spin' : ''}`} />
               </button>
@@ -794,6 +834,19 @@ export const TopHeader: React.FC<TopHeaderProps> = ({
                 <FolderSync className="w-3.5 h-3.5 text-(--op-accent-alt)" />
                 <span>{t('header.openFolder')}</span>
               </button>
+
+              {localDirState.isConnected && (
+                <button
+                  id="btn-sync-from-folder"
+                  onClick={handleFetchFromFolder}
+                  disabled={isFetching}
+                  className="px-2.5 py-1.5 rounded bg-(--op-bg-raised) hover:bg-(--op-bg-raised-hover) text-(--op-text-secondary) hover:text-(--op-text-primary) text-xs flex items-center gap-1.5 border border-(--op-border) transition-colors cursor-pointer"
+                  title={t('header.syncFromFolderTooltip')}
+                >
+                  <FolderDown className={`w-3.5 h-3.5 text-(--op-success) ${isFetching ? 'animate-pulse' : ''}`} />
+                  <span>{t('header.syncFromFolder')}</span>
+                </button>
+              )}
 
               <button
                 id="btn-import-file"

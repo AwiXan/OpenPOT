@@ -279,7 +279,7 @@ export const MultiLanguageGridView: React.FC<MultiLanguageGridViewProps> = ({
                             value={toDisplayText(strVal, showWhitespaceMarks)}
                             onChange={(e) => {
                               const updated = [...currentMsgstr];
-                              updated[idx] = toStoredText(e.target.value);
+                              updated[idx] = toStoredText(e.target.value, showWhitespaceMarks);
                               onUpdateTranslation(po.id, potEntry.id, updated);
                             }}
                             onKeyDown={(e) => {

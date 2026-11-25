@@ -172,8 +172,8 @@ export function lintEntry(entry: PoEntry, requiredPluralCount = 1): LintIssue[] 
     }
 
     // Check leading/trailing newlines
-    const sourceHasLeadingNewline = entry.msgid.startsWith('\n') || entry.msgid.startsWith('\\n');
-    const targetHasLeadingNewline = str.startsWith('\n') || str.startsWith('\\n');
+    const sourceHasLeadingNewline = entry.msgid.startsWith('\n');
+    const targetHasLeadingNewline = str.startsWith('\n');
     if (sourceHasLeadingNewline !== targetHasLeadingNewline && !isSymbolic) {
       issues.push({
         id: `${entry.id}_newline_start_${idx}`,
@@ -186,8 +186,8 @@ export function lintEntry(entry: PoEntry, requiredPluralCount = 1): LintIssue[] 
       });
     }
 
-    const sourceHasTrailingNewline = entry.msgid.endsWith('\n') || entry.msgid.endsWith('\\n');
-    const targetHasTrailingNewline = str.endsWith('\n') || str.endsWith('\\n');
+    const sourceHasTrailingNewline = entry.msgid.endsWith('\n');
+    const targetHasTrailingNewline = str.endsWith('\n');
     if (sourceHasTrailingNewline !== targetHasTrailingNewline && !isSymbolic) {
       issues.push({
         id: `${entry.id}_newline_end_${idx}`,

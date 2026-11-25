@@ -242,14 +242,11 @@ export async function scanFileList(
   return buildWorkspacesFromFiles(fileEntries, detectedDirName, null);
 }
 
-/**
- * Scans a local directory handle and constructs Workspace objects for all domains found
- */
-export async function scanLocalDirectory(dirHandle: any): Promise<LoadedDirectoryResult> {
-  const dirName = dirHandle.name || 'Local Folder';
+export async function scanLocalDirectoryEntries(
+  dirHandle: any
+): Promise<{ name: string; handle: any; content: string }[]> {
   const fileEntries: { name: string; handle: any; content: string }[] = [];
 
-  // Iterate over files in the directory
   // @ts-ignore
   for await (const entry of dirHandle.values()) {
     if (entry.kind === 'file') {
@@ -265,6 +262,16 @@ export async function scanLocalDirectory(dirHandle: any): Promise<LoadedDirector
       }
     }
   }
+
+  return fileEntries;
+}
+
+/**
+ * Scans a local directory handle and constructs Workspace objects for all domains found
+ */
+export async function scanLocalDirectory(dirHandle: any): Promise<LoadedDirectoryResult> {
+  const dirName = dirHandle.name || 'Local Folder';
+  const fileEntries = await scanLocalDirectoryEntries(dirHandle);
 
   return buildWorkspacesFromFiles(fileEntries, dirName, dirHandle);
 }

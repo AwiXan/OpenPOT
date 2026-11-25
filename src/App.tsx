@@ -7,6 +7,7 @@ import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { Workspace, FilterStatus, LintIssue, AppSettings, PoFileRecord, PoEntry } from './types/gettext';
 import { INITIAL_SAMPLE_WORKSPACES } from './lib/sampleWorkspaces';
 import { serializePoFile, parsePoContent, linkPoEntriesToPot, generateEntryId } from './lib/poParser';
+import { hashFileContent } from './lib/folderSync';
 import { compileMoBinary } from './lib/moCompiler';
 import { getPluralRuleForLanguage } from './lib/pluralEngine';
 import { lintEntry } from './lib/linter';
@@ -186,12 +187,13 @@ export default function App() {
     handleFolderInputChange,
     handleDisconnectLocalFolder,
     handleSyncLocalFolder,
+    handleSyncFromFolder,
     triggerDiskSyncForPo,
     handleImportFile,
     handleExport,
     handleExportMo,
     handleImportCsvJson,
-  } = useFileSystemSync(activeWorkspaceId, currentWorkspace, setWorkspaces, setActiveWorkspaceId, settings, showToast, t);
+  } = useFileSystemSync(workspaces, activeWorkspaceId, currentWorkspace, setWorkspaces, setActiveWorkspaceId, settings, showToast, t);
 
   const {
     pushHistorySnapshot, canUndo, canRedo, handleUndo, handleRedo,
@@ -416,6 +418,10 @@ export default function App() {
                 isModified: false,
               },
               poFiles: revertedPoFiles,
+              diskFileHashes: {
+                ...(w.diskFileHashes || {}),
+                [w.potFile.filename || filename]: hashFileContent(content),
+              },
             };
           }
 
@@ -431,9 +437,14 @@ export default function App() {
             return po;
           });
 
+          const revertedName = updatedPoFiles.find((po) => po.filename === filename || filename.endsWith(po.filename))?.filename || filename;
           return {
             ...w,
             poFiles: updatedPoFiles,
+            diskFileHashes: {
+              ...(w.diskFileHashes || {}),
+              [revertedName]: hashFileContent(content),
+            },
           };
         })
       );
@@ -537,6 +548,7 @@ export default function App() {
         onOpenLocalFolder={handleOpenLocalFolder}
         localDirState={localDirState}
         onSyncLocalFolder={handleSyncLocalFolder}
+        onSyncFromFolder={() => handleSyncFromFolder({ onBeforeApply: (ws) => pushHistorySnapshot(ws, 'Sync from folder') })}
         onDisconnectLocalFolder={handleDisconnectLocalFolder}
         viewMode={viewMode}
         setViewMode={setViewMode}

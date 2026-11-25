@@ -1,16 +1,40 @@
 import { useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import JSZip from 'jszip';
+import { confirm } from '@tauri-apps/plugin-dialog';
+import { exists } from '@tauri-apps/plugin-fs';
 import { Workspace, PoFileRecord, PotFileRecord, LocalDirectoryState, AppSettings } from '../types/gettext';
 import { getPluralRuleForLanguage } from '../lib/pluralEngine';
-import { scanFileList, savePoAndMoToDirectory, saveWorkspaceToDirectory, formatPoFilename, formatMoFilename } from '../lib/localDirectoryManager';
+import {
+  scanFileList,
+  scanLocalDirectoryEntries,
+  savePoAndMoToDirectory,
+  saveWorkspaceToDirectory,
+  formatPoFilename,
+  formatMoFilename,
+} from '../lib/localDirectoryManager';
 import { parsePoContent, serializePoFile, linkPoEntriesToPot } from '../lib/poParser';
 import { compileMoBinary } from '../lib/moCompiler';
 import { pickNativeDirectory, pickNativeFile, readNativeEncodedTextFile, scanNativeDirectoryFiles, writeNativeTextFile, writeNativeBinaryFile } from '../lib/nativeFS';
 import { initGitRepository } from '../lib/gitEngine';
 import { createImportedPoFiles, parseTranslationsCsv, parseTranslationsJson, serializeTranslationsCsv, serializeTranslationsJson, JsonFormat, TranslationFormat } from '../lib/translationFormats';
+import {
+  ScannedFolderFile,
+  computeDiskFileHashes,
+  detectExternalFolderChanges,
+  hashFileContent,
+  mergeFolderFilesIntoWorkspace,
+} from '../lib/folderSync';
 import type { CsvEncoding } from '../components/TransferModal';
 
+export interface SyncFromFolderOptions {
+  silent?: boolean;
+  onlyIfUnmodified?: boolean;
+  confirmIfModified?: boolean;
+  onBeforeApply?: (ws: Workspace) => void;
+}
+
 export function useFileSystemSync(
+  workspaces: Workspace[],
   activeWorkspaceId: string,
   currentWorkspace: Workspace | undefined,
   setWorkspaces: React.Dispatch<React.SetStateAction<Workspace[]>>,
@@ -29,6 +53,13 @@ export function useFileSystemSync(
   }, [recentFolders]);
 
   const folderInputRef = useRef<HTMLInputElement>(null);
+  const workspacesRef = useRef(workspaces);
+  workspacesRef.current = workspaces;
+  const activeWorkspaceIdRef = useRef(activeWorkspaceId);
+  activeWorkspaceIdRef.current = activeWorkspaceId;
+  const hasRunStartupSyncRef = useRef(false);
+  const isAutoSyncingRef = useRef(false);
+  const lastAutoSyncAtRef = useRef(0);
 
   useEffect(() => {
     if (folderInputRef.current) {
@@ -52,6 +83,183 @@ export function useFileSystemSync(
     };
   }, [currentWorkspace, settings.autoCompileMoOnSave]);
 
+  const readWorkspaceFolderFiles = useCallback(async (ws: Workspace): Promise<ScannedFolderFile[]> => {
+    if (ws.localDirPath) {
+      const knownPaths = [ws.potFile.filename, ...ws.poFiles.map((p) => p.filename)];
+      const nativeFiles = await scanNativeDirectoryFiles(ws.localDirPath, knownPaths);
+      return nativeFiles.map((f) => ({ name: f.name, content: f.content }));
+    }
+    if (ws.localDirHandle) {
+      return scanLocalDirectoryEntries(ws.localDirHandle);
+    }
+    return [];
+  }, []);
+
+  const syncWorkspaceFromFolder = useCallback(
+    async (targetWorkspace: Workspace, options: SyncFromFolderOptions = {}): Promise<boolean> => {
+      if (!targetWorkspace.localDirPath && !targetWorkspace.localDirHandle) {
+        if (!options.silent) {
+          showToast(t('toast.noFolderConnected') || 'No local folder is connected to this workspace.', 'warning');
+        }
+        return false;
+      }
+
+      if (options.onlyIfUnmodified && targetWorkspace.isModified) {
+        return false;
+      }
+
+      let scannedFiles: ScannedFolderFile[];
+      try {
+        scannedFiles = await readWorkspaceFolderFiles(targetWorkspace);
+      } catch (err: any) {
+        console.error('Failed to read connected folder:', err);
+        if (!options.silent) {
+          showToast(`Failed to read folder: ${err?.message || err}`, 'warning');
+        }
+        return false;
+      }
+
+      if (scannedFiles.length === 0) {
+        if (!options.silent) {
+          showToast(t('toast.noGettextFilesFound') || 'No .pot or .po files found in connected folder.', 'warning');
+        }
+        return false;
+      }
+
+      const result = mergeFolderFilesIntoWorkspace(targetWorkspace, scannedFiles, {
+        preserveInAppCategoriesWhenModified: Boolean(targetWorkspace.isModified),
+      });
+
+      if (options.confirmIfModified && targetWorkspace.isModified) {
+        const confirmMsg =
+          t('toast.confirmFetchOverModified') ||
+          'You have unsaved changes in OpenPO. Syncing from the folder will update translations from disk (categories will be preserved and you can undo with Ctrl+Z). Continue?';
+        const ok = await confirm(confirmMsg, {
+          title: t('header.syncFromFolder') || 'Sync from Folder',
+          kind: 'warning',
+        });
+        if (!ok) return false;
+      }
+
+      const hashesChanged =
+        JSON.stringify(targetWorkspace.diskFileHashes || {}) !==
+        JSON.stringify(result.workspace.diskFileHashes || {});
+
+      if (!result.hasContentChanges && !hashesChanged) {
+        if (!options.silent) {
+          showToast(t('toast.folderUpToDate') || 'Folder is already up to date.', 'info');
+        }
+        return false;
+      }
+
+      if (result.hasContentChanges) {
+        options.onBeforeApply?.(targetWorkspace);
+      }
+
+      setWorkspaces((prev) =>
+        prev.map((w) => (w.id === targetWorkspace.id ? result.workspace : w))
+      );
+
+      if (result.hasContentChanges) {
+        const msg = (
+          t('toast.fetchedFromFolder') ||
+          'Synced ${count} file(s) from folder (categories preserved)!'
+        ).replace('${count}', result.changedFilesCount.toString());
+        showToast(msg, 'success');
+      } else if (!options.silent) {
+        showToast(t('toast.folderUpToDate') || 'Folder is already up to date.', 'info');
+      }
+
+      return result.hasContentChanges;
+    },
+    [readWorkspaceFolderFiles, setWorkspaces, showToast, t]
+  );
+
+  const handleSyncFromFolder = useCallback(
+    async (options: SyncFromFolderOptions = {}) => {
+      if (!currentWorkspace) return false;
+      return syncWorkspaceFromFolder(currentWorkspace, {
+        confirmIfModified: true,
+        ...options,
+      });
+    },
+    [currentWorkspace, syncWorkspaceFromFolder]
+  );
+
+  // Auto-sync connected native folders on app startup so external manual edits appear immediately
+  useEffect(() => {
+    if (hasRunStartupSyncRef.current) return;
+    hasRunStartupSyncRef.current = true;
+
+    const runStartupSync = async () => {
+      const initialWorkspaces = workspacesRef.current;
+      let totalExternalWarned = false;
+
+      for (const ws of initialWorkspaces) {
+        if (!ws.localDirPath) continue;
+        try {
+          const dirExists = await exists(ws.localDirPath);
+          if (!dirExists) continue;
+
+          if (!ws.isModified) {
+            await syncWorkspaceFromFolder(ws, { silent: true, onlyIfUnmodified: true });
+          } else if (ws.diskFileHashes) {
+            const scanned = await readWorkspaceFolderFiles(ws);
+            const { changedFiles } = detectExternalFolderChanges(ws, scanned);
+            if (changedFiles.length > 0 && !totalExternalWarned) {
+              totalExternalWarned = true;
+              showToast(
+                t('toast.externalChangesDetected') ||
+                  'External edits detected in folder. Click "Sync from Folder" to pull them without losing categories.',
+                'warning'
+              );
+            }
+          }
+        } catch {
+          // Ignore non-native path or inaccessible folder on startup
+        }
+      }
+      lastAutoSyncAtRef.current = Date.now();
+    };
+
+    runStartupSync();
+  }, [readWorkspaceFolderFiles, showToast, syncWorkspaceFromFolder, t]);
+
+  // Auto-sync active workspace when window regains focus if there are no unsaved in-app edits
+  useEffect(() => {
+    const handleWindowFocus = async () => {
+      if (isAutoSyncingRef.current) return;
+      if (Date.now() - lastAutoSyncAtRef.current < 1500) return;
+
+      const ws = workspacesRef.current.find((w) => w.id === activeWorkspaceIdRef.current);
+      if (!ws || !ws.localDirPath || ws.isModified) return;
+
+      isAutoSyncingRef.current = true;
+      try {
+        const dirExists = await exists(ws.localDirPath);
+        if (!dirExists) return;
+
+        const scanned = await readWorkspaceFolderFiles(ws);
+        if (scanned.length === 0) return;
+
+        if (ws.diskFileHashes) {
+          const { changedFiles } = detectExternalFolderChanges(ws, scanned);
+          if (changedFiles.length === 0) return;
+        }
+
+        await syncWorkspaceFromFolder(ws, { silent: true, onlyIfUnmodified: true });
+      } catch {
+        // Ignore transient focus errors
+      } finally {
+        lastAutoSyncAtRef.current = Date.now();
+        isAutoSyncingRef.current = false;
+      }
+    };
+
+    window.addEventListener('focus', handleWindowFocus);
+    return () => window.removeEventListener('focus', handleWindowFocus);
+  }, [readWorkspaceFolderFiles, syncWorkspaceFromFolder]);
+
   const loadFolderNatively = async (dirPath: string) => {
     try {
       const files = await scanNativeDirectoryFiles(dirPath);
@@ -60,26 +268,36 @@ export function useFileSystemSync(
         return false;
       }
 
-      const potFileScanned = files.find((f) => f.name.endsWith('.pot'));
-      const poFilesScanned = files.filter((f) => f.name.endsWith('.po'));
+      const potFileScanned = files.find((f) => f.name.toLowerCase().endsWith('.pot'));
+      const poFilesScanned = files.filter((f) => f.name.toLowerCase().endsWith('.po'));
 
-      const domainName = potFileScanned ? potFileScanned.name.replace(/\.pot$/, '') : 'messages';
+      const domainName = potFileScanned ? potFileScanned.name.replace(/\.pot$/i, '') : 'messages';
 
       const parsedPot = potFileScanned
         ? parsePoContent(potFileScanned.content)
         : parsePoContent('');
+
+      let potEntries = parsedPot.entries;
+      if (!potFileScanned && poFilesScanned.length > 0) {
+        const firstParsed = parsePoContent(poFilesScanned[0].content);
+        potEntries = firstParsed.entries.map((e) => ({
+          ...e,
+          msgstr: e.msgidPlural ? ['', ''] : [''],
+        }));
+      }
 
       const potRecord: PotFileRecord = {
         id: `pot_${Date.now()}`,
         filename: potFileScanned ? potFileScanned.name : `${domainName}.pot`,
         domainName,
         header: parsedPot.header,
-        entries: parsedPot.entries,
+        entries: potEntries,
+        isModified: false,
       };
 
       const poRecords: PoFileRecord[] = poFilesScanned.map((f, i) => {
         const parsed = parsePoContent(f.content);
-        const langCode = parsed.header.language || f.name.replace(/\.po$/, '');
+        const langCode = parsed.header.language || f.name.replace(/\.po$/i, '');
         parsed.header.language = langCode;
         if (!parsed.header.pluralForms) {
           parsed.header.pluralForms = getPluralRuleForLanguage(langCode).formula;
@@ -91,8 +309,13 @@ export function useFileSystemSync(
           languageName: langCode.toUpperCase(),
           header: parsed.header,
           entries: linkPoEntriesToPot(potRecord.entries, parsed.entries),
+          isModified: false,
         };
       });
+
+      const diskFileHashes = computeDiskFileHashes(
+        files.map((f) => ({ name: f.name, content: f.content }))
+      );
 
       const loadedWorkspace: Workspace = {
         id: `ws_${Date.now()}`,
@@ -104,6 +327,8 @@ export function useFileSystemSync(
         activeEntryId: potRecord.entries[0]?.id || null,
         createdAt: new Date().toISOString(),
         localDirPath: dirPath,
+        isModified: false,
+        diskFileHashes,
       };
 
       setWorkspaces((prev) => [...prev, loadedWorkspace]);
@@ -164,7 +389,7 @@ export function useFileSystemSync(
     setWorkspaces((prev) =>
       prev.map((w) =>
         w.id === activeWorkspaceId
-          ? { ...w, localDirPath: undefined, localDirHandle: undefined }
+          ? { ...w, localDirPath: undefined, localDirHandle: undefined, diskFileHashes: undefined }
           : w
       )
     );
@@ -182,26 +407,79 @@ export function useFileSystemSync(
       return;
     }
 
+    // Check if external edits happened on disk before blindly overwriting
+    try {
+      const scannedOnDisk = await readWorkspaceFolderFiles(currentWorkspace);
+      if (scannedOnDisk.length > 0 && currentWorkspace.diskFileHashes) {
+        const { changedFiles } = detectExternalFolderChanges(currentWorkspace, scannedOnDisk);
+        if (changedFiles.length > 0) {
+          if (!currentWorkspace.isModified) {
+            // Nothing was edited in OpenPO -> pull from disk instead of overwriting external work!
+            const merged = mergeFolderFilesIntoWorkspace(currentWorkspace, scannedOnDisk, {
+              preserveInAppCategoriesWhenModified: false,
+            });
+            let compiledMo = 0;
+            if (dirPath && (settings.autoCompileMoOnSave ?? true)) {
+              const domain = merged.workspace.domainName || 'messages';
+              const cleanDir = dirPath.replace(/\\/g, '/');
+              for (const po of merged.workspace.poFiles) {
+                const poFilename = po.filename || formatPoFilename(domain, po.language, settings.poNamingScheme);
+                const moFilename = poFilename.endsWith('.po')
+                  ? poFilename.slice(0, -3) + '.mo'
+                  : formatMoFilename(domain, po.language, settings.poNamingScheme);
+                await writeNativeBinaryFile(`${cleanDir}/${moFilename}`, compileMoBinary(po.header, po.entries));
+                compiledMo++;
+              }
+            }
+            setWorkspaces((prev) =>
+              prev.map((w) => (w.id === activeWorkspaceId ? merged.workspace : w))
+            );
+            const msg = (
+              t('toast.pulledBeforeSync') ||
+              'External edits found in folder — synced ${count} file(s) from disk (categories preserved)!'
+            ).replace('${count}', merged.changedFilesCount.toString());
+            showToast(compiledMo > 0 ? `${msg} (+${compiledMo} .mo)` : msg, 'success');
+            return;
+          }
+
+          const overwriteMsg = (
+            t('toast.confirmOverwriteExternal') ||
+            'Files in the folder (${files}) were modified externally since the last sync.\n\nOverwrite disk files with your OpenPO changes?\n(Click Cancel and use "Sync from Folder" to keep external edits.)'
+          ).replace('${files}', changedFiles.join(', '));
+          const confirmed = await confirm(overwriteMsg, {
+            title: t('menu.saveSync') || 'Save & Sync to Disk',
+            kind: 'warning',
+          });
+          if (!confirmed) return;
+        }
+      }
+    } catch (err) {
+      console.warn('Pre-sync disk check failed, continuing save:', err);
+    }
+
     if (dirPath) {
       try {
         const domain = currentWorkspace.domainName || 'messages';
         let savedPo = 0;
         let savedMo = 0;
         const cleanDir = dirPath.replace(/\\/g, '/');
+        const writtenHashes: Record<string, string> = {};
 
-        // 1. ИСПРАВЛЕНИЕ: Обязательно сохраняем POT-файл (шаблон)
+        // 1. Save POT template
         const potFilename = currentWorkspace.potFile.filename || `${domain}.pot`;
         const potContent = serializePoFile(currentWorkspace.potFile.header, currentWorkspace.potFile.entries, true);
         await writeNativeTextFile(`${cleanDir}/${potFilename}`, potContent);
+        writtenHashes[potFilename] = hashFileContent(potContent);
         savedPo++;
 
-        // 2. ИСПРАВЛЕНИЕ: Сохраняем языковые PO-файлы БЕЗ принудительной авто-категоризации
+        // 2. Save PO files without forcing auto-categorization
         for (const po of currentWorkspace.poFiles) {
           const poFilename = po.filename || formatPoFilename(domain, po.language, settings.poNamingScheme);
           const poContent = serializePoFile(po.header, po.entries, false);
           const fullPoPath = `${cleanDir}/${poFilename}`;
 
           await writeNativeTextFile(fullPoPath, poContent);
+          writtenHashes[poFilename] = hashFileContent(poContent);
           savedPo++;
 
           if (settings.autoCompileMoOnSave ?? true) {
@@ -224,7 +502,17 @@ export function useFileSystemSync(
         }
 
         setWorkspaces((prev) =>
-          prev.map((w) => (w.id === activeWorkspaceId ? { ...w, isModified: false } : w))
+          prev.map((w) =>
+            w.id === activeWorkspaceId
+              ? {
+                  ...w,
+                  isModified: false,
+                  potFile: { ...w.potFile, isModified: false },
+                  poFiles: w.poFiles.map((p) => ({ ...p, isModified: false })),
+                  diskFileHashes: writtenHashes,
+                }
+              : w
+          )
         );
 
         const message = t('toast.synced').replace('${savedPo}', savedPo.toString()).replace('${savedMo}', savedMo.toString());
@@ -243,8 +531,19 @@ export function useFileSystemSync(
           currentWorkspace,
           settings.autoCompileMoOnSave ?? true,
           settings.poNamingScheme || 'domain_lang',
-          false // 3. ИСПРАВЛЕНИЕ: Отключаем перезапись категорий для Web API
+          false
         );
+
+        const domain = currentWorkspace.domainName || 'messages';
+        const writtenHashes: Record<string, string> = {};
+        const potFilename = currentWorkspace.potFile.filename || `${domain}.pot`;
+        writtenHashes[potFilename] = hashFileContent(
+          serializePoFile(currentWorkspace.potFile.header, currentWorkspace.potFile.entries, true)
+        );
+        for (const po of currentWorkspace.poFiles) {
+          const poFilename = po.filename || formatPoFilename(domain, po.language, settings.poNamingScheme);
+          writtenHashes[poFilename] = hashFileContent(serializePoFile(po.header, po.entries, false));
+        }
 
         if (settings.autoCompileJsonOnSave || settings.autoCompileCsvOnSave) {
           const writeDirectoryText = async (filename: string, content: string) => {
@@ -253,13 +552,22 @@ export function useFileSystemSync(
             await writable.write(content);
             await writable.close();
           };
-          const domain = currentWorkspace.domainName || 'messages';
           if (settings.autoCompileJsonOnSave) await writeDirectoryText(`${domain}.json`, serializeTranslationsJson(currentWorkspace, settings.csvPluralSuffix || '_P%d'));
           if (settings.autoCompileCsvOnSave) await writeDirectoryText(`${domain}.csv`, serializeTranslationsCsv(currentWorkspace, settings.csvPluralSuffix || '_P%d'));
         }
 
         setWorkspaces((prev) =>
-          prev.map((w) => (w.id === activeWorkspaceId ? { ...w, isModified: false } : w))
+          prev.map((w) =>
+            w.id === activeWorkspaceId
+              ? {
+                  ...w,
+                  isModified: false,
+                  potFile: { ...w.potFile, isModified: false },
+                  poFiles: w.poFiles.map((p) => ({ ...p, isModified: false })),
+                  diskFileHashes: writtenHashes,
+                }
+              : w
+          )
         );
 
         showToast(`Synced ${summary.savedPoCount} .po files and compiled ${summary.savedMoCount} .mo binaries directly to disk!`, 'success');
@@ -409,7 +717,18 @@ export function useFileSystemSync(
           if (settings.autoCompileCsvOnSave) await writeNativeTextFile(`${cleanDir}/${domain}.csv`, serializeTranslationsCsv(currentWorkspace, settings.csvPluralSuffix || '_P%d'));
 
           setWorkspaces((prev) =>
-            prev.map((w) => (w.id === activeWorkspaceId ? { ...w, isModified: false } : w))
+            prev.map((w) =>
+              w.id === activeWorkspaceId
+                ? {
+                    ...w,
+                    isModified: false,
+                    diskFileHashes: {
+                      ...(w.diskFileHashes || {}),
+                      [poFilename]: hashFileContent(poContent),
+                    },
+                  }
+                : w
+            )
           );
         } catch (err) {
           console.error('NATIVE DISK SYNC ERROR:', err);
@@ -426,7 +745,7 @@ export function useFileSystemSync(
             settings.autoCompileMoOnSave ?? true,
             domain,
             settings.poNamingScheme || 'domain_lang',
-            false // 4. ИСПРАВЛЕНИЕ: Отключаем перезапись категорий
+            false
           );
           if (settings.autoCompileJsonOnSave || settings.autoCompileCsvOnSave) {
             const writeDirectoryText = async (filename: string, content: string) => {
@@ -435,7 +754,6 @@ export function useFileSystemSync(
               await writable.write(content);
               await writable.close();
             };
-            const domain = currentWorkspace.domainName || 'messages';
             if (settings.autoCompileJsonOnSave) await writeDirectoryText(`${domain}.json`, serializeTranslationsJson(currentWorkspace, settings.csvPluralSuffix || '_P%d'));
             if (settings.autoCompileCsvOnSave) await writeDirectoryText(`${domain}.csv`, serializeTranslationsCsv(currentWorkspace, settings.csvPluralSuffix || '_P%d'));
           }
@@ -522,6 +840,7 @@ export function useFileSystemSync(
     handleFolderInputChange,
     handleDisconnectLocalFolder,
     handleSyncLocalFolder,
+    handleSyncFromFolder,
     triggerDiskSyncForPo,
     handleImportFile,
     handleExport,
